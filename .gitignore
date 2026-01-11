@@ -3,6 +3,7 @@
 *.key
 API_KEY*
 openRouterAPIkey.md
+LLM/
 
 # Ignore OS files
 .DS_Store
