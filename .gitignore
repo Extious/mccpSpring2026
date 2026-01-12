@@ -3,6 +3,9 @@
 *.key
 API_KEY*
 openRouterAPIkey.md
+HKBUAPIkey.md
+zai.md
+poe.md
 
 # Ignore OS files
 .DS_Store
