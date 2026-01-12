@@ -37,7 +37,9 @@ update the same file - add info below
    - "Expert-deploy"
    - "hllm-creator"
 
-10. **WYQin** - Empty folder (no papers shared)
+10. **WYQin** - 2 papers shared:
+    - "Doubly-Bounded Queue for Constrained Online Learning: Keeping Pace with Dynamics of Both Loss and Constraint" (AAAI 2025)
+    - "Optimal Algorithms for Online Convex Optimization with Adversarial Constraints" (NeurIPS 2024)
 
 11. **YFZhang** - 2 papers shared:
     - "Learning with Mixture of Experts" (ICLR 2024)
@@ -72,7 +74,7 @@ update the same file - add info below
 
 **Summary:**
 - Total students: 18
-- Students with papers: 15 (83.3%)
-- Students with empty folders: 3 (LKang, SDCao, WYQin)
-- Total papers shared: 30 papers from 15 students (average ~2 papers per student)
+- Students with papers: 16 (88.9%)
+- Students with empty folders: 2 (LKang, SDCao)
+- Total papers shared: 32 papers from 16 students (average ~2 papers per student)
 
