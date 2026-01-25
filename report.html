@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCCP 6020 – Needs Analysis Survey Report</title>
+<style>
+:root { --bg: #0f1419; --surface: #1a2332; --text: #e6edf3; --muted: #7d8590; --accent: #58a6ff; --accent2: #3fb950; }
+* { box-sizing: border-box; }
+body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; margin: 0; padding: 1rem; }
+.container { max-width: 720px; margin: 0 auto; padding: 0 1.5rem; }
+h1 { font-size: 1.4rem; margin: 0 0 0.5rem 0; }
+h2 { font-size: 1.1rem; margin: 1.25rem 0 0.5rem 0; color: var(--accent); }
+h3 { font-size: 0.95rem; margin: 0 0 0.4rem 0; }
+.card { background: var(--surface); border-radius: 6px; padding: 0.75rem 1rem; margin: 0.5rem 0; }
+.pie-card { padding: 0.75rem 1rem; }
+.pie-wrap { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 1rem; }
+.pie { width: 160px; height: 160px; border-radius: 50%; flex-shrink: 0; }
+.pie-legend { list-style: none; padding: 0; margin: 0; font-size: 0.8rem; }
+.pie-legend li { display: flex; align-items: center; gap: 0.4rem; margin: 0.2rem 0; }
+.swatch { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+blockquote { border-left: 3px solid var(--accent); margin: 0.4rem 0; padding-left: 0.75rem; color: var(--muted); font-size: 0.9rem; font-style: italic; }
+ul { padding-left: 1.1rem; margin: 0.4rem 0; }
+li { margin: 0.25rem 0; font-size: 0.9rem; }
+.excerpt { font-size: 0.85rem; margin: 0.4rem 0; }
+.iop-excerpt { padding: 0.6rem 1rem; }
+.iop { display: grid; grid-template-columns: auto 1fr; gap: 0.35rem 1rem; margin: 0.5rem 0 0 0; font-size: 0.85rem; }
+.iop dt { color: var(--accent); font-weight: 600; min-width: 4.5rem; }
+.iop dd { margin: 0; color: var(--muted); white-space: pre-wrap; }
+.muted { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
+code { font-family: ui-monospace, monospace; font-size: 0.85em; }
+</style>
+</head>
+<body>
+<div class="container">
+<h1>MCCP 6020 – Needs Analysis Survey Report</h1>
+<p class="muted">Aggregate results only. Total responses: 9 (matched to roster; test and unmatched excluded). No personal data. Non-respondents: <code>students_not_completed.md</code>.</p>
+
+<h2>1. Overall Results</h2>
+<div class='card pie-card'>
+<h3>AI use frequency (1–5)</h3>
+<div class='pie-wrap'>
+  <div class='pie' style='background: conic-gradient(#3182ce 0% 11.11111111111111%, #63b3ed 11.11111111111111% 44.44444444444444%, #4299e1 44.44444444444444% 100.0%);'></div>
+  <ul class='pie-legend'><li><span class='swatch' style='background:#3182ce'></span> 3 (1, 11%)</li><li><span class='swatch' style='background:#63b3ed'></span> 4 (3, 33%)</li><li><span class='swatch' style='background:#4299e1'></span> 5 (5, 56%)</li></ul>
+</div>
+</div>
+<div class='card pie-card'>
+<h3>Helpful stages (writing workflow)</h3>
+<div class='pie-wrap'>
+  <div class='pie' style='background: conic-gradient(#3182ce 0% 16.666666666666668%, #63b3ed 16.666666666666668% 33.333333333333336%, #4299e1 33.333333333333336% 47.22222222222223%, #90cdf4 47.22222222222223% 61.111111111111114%, #38a169 61.111111111111114% 72.22222222222223%, #68d391 72.22222222222223% 83.33333333333334%, #d69e2e 83.33333333333334% 91.66666666666667%, #ecc94b 91.66666666666667% 100.0%);'></div>
+  <ul class='pie-legend'><li><span class='swatch' style='background:#3182ce'></span> drafting (6, 67%)</li><li><span class='swatch' style='background:#63b3ed'></span> ideation (6, 67%)</li><li><span class='swatch' style='background:#4299e1'></span> literature (5, 56%)</li><li><span class='swatch' style='background:#90cdf4'></span> revision (5, 56%)</li><li><span class='swatch' style='background:#38a169'></span> data-analysis (4, 44%)</li><li><span class='swatch' style='background:#68d391'></span> translation (4, 44%)</li><li><span class='swatch' style='background:#d69e2e'></span> outlining (3, 33%)</li><li><span class='swatch' style='background:#ecc94b'></span> proofreading (3, 33%)</li></ul>
+</div>
+</div>
+<div class='card pie-card'>
+<h3>Thematic themes (AI wishlist)</h3>
+<div class='pie-wrap'>
+  <div class='pie' style='background: conic-gradient(#3182ce 0% 16.666666666666668%, #63b3ed 16.666666666666668% 33.333333333333336%, #4299e1 33.333333333333336% 50.0%, #90cdf4 50.0% 66.66666666666667%, #38a169 66.66666666666667% 75.0%, #68d391 75.0% 83.33333333333333%, #d69e2e 83.33333333333333% 91.66666666666666%, #ecc94b 91.66666666666666% 99.99999999999999%);'></div>
+  <ul class='pie-legend'><li><span class='swatch' style='background:#3182ce'></span> Automation (2, 22%)</li><li><span class='swatch' style='background:#63b3ed'></span> Cross-section consistency (2, 22%)</li><li><span class='swatch' style='background:#4299e1'></span> Literature search (2, 22%)</li><li><span class='swatch' style='background:#90cdf4'></span> Other (2, 22%)</li><li><span class='swatch' style='background:#38a169'></span> Code reproducibility (1, 11%)</li><li><span class='swatch' style='background:#68d391'></span> Natural revision/editing (1, 11%)</li><li><span class='swatch' style='background:#d69e2e'></span> Persistent memory (1, 11%)</li><li><span class='swatch' style='background:#ecc94b'></span> Reducing hallucination (1, 11%)</li></ul>
+</div>
+</div>
+<h2>2. Representative Excerpts</h2>
+<div class="card excerpt iop-excerpt"><strong>Workflow – outline from papers</strong>
+<dl class="iop">
+<dt>Input</dt><dd>Original paper, other useful equations, referenceses</dd>
+<dt>Process</dt><dd>Arrange these references and give me basic outline of these papers which will be helpful in draft.</dd>
+<dt>Output</dt><dd>A outline of papers including basic ideas, method and results.</dd>
+</dl></div>
+<div class="card excerpt iop-excerpt"><strong>Workflow – methodology revision</strong>
+<dl class="iop">
+<dt>Input</dt><dd>A draft of the methodology section of my paper + reviewer comments pointing out that the experimental setup is unclear and lacks justification for parameter choices.</dd>
+<dt>Process</dt><dd>Ask the AI to rewrite the methodology section to improve clarity and logical flow, explicitly explain the experimental setup, and add concise justifications for key parameter settings, while keeping the original technical content unchanged.</dd>
+<dt>Output</dt><dd>A revised methodology section with clearer explanations of the experimental design and parameter choices, improved readability, and brief notes highlighting where and how the revisions address the reviewer’s concerns.</dd>
+</dl></div>
+<div class="card excerpt iop-excerpt"><strong>Workflow – data processing / code</strong>
+<dl class="iop">
+<dt>Input</dt><dd>Some data files, and the prompt about how I expected to process these data files.</dd>
+<dt>Process</dt><dd>Give the codes for processing.</dd>
+<dt>Output</dt><dd>Codes with explanation.</dd>
+</dl></div>
+<div class='card excerpt'><strong>AI Wishlist – reducing hallucination</strong><blockquote>Search for details in paper without hallucination...</blockquote></div>
+<div class='card excerpt'><strong>AI Wishlist – consistency & intent</strong><blockquote>I wish AI could better handle logical and mathematical consistency checking, especially for complex derivations and technical arguments. I also hope AI could more automatically propagate revisions across different sections of a paper to maintain consistency. Finally, preserving the author’s original technical intent during language revisions remains an area for improvement....</blockquote></div>
+<div class='card excerpt'><strong>AI Wishlist – natural revision</strong><blockquote>Paper revision and editing. Now, paper revision and editing are very easy to find out, that means they are very different with human writing. Sometimes, word usage and content organization after AI editing is unnatural and complex....</blockquote></div>
+<h2>3. Thematic Analysis</h2><div class='card'>
+
+<ul>
+<li><strong>Literature & discovery:</strong> Many students use AI for ideation, literature search, and summarising papers. 
+Tools: ChatGPT, Doubao, Gemini, Consensus. Common workflow: input topic or PDFs → output outlines, comparisons, references.</li>
+<li><strong>Drafting & revision:</strong> Polishing, grammar checks (Grammarly, etc.), and paragraph-level revision are widespread. 
+Several wish for clearer structure feedback (e.g. paragraph order, merge/split) and preservation of author voice.</li>
+<li><strong>Technical & code:</strong> Coding support (Cursor, Codex, DeepSeek), reproducibility checks, and BibTeX/format fixes 
+appear often. Some wish for AI to verify code against papers or to maintain “consistent memory” across coding and writing.</li>
+<li><strong>Translation:</strong> Translation of papers or passages is frequently mentioned, especially for reading and drafting.</li>
+<li><strong>Trust & quality:</strong> Recurring wishes: reduce hallucination, better logical/mathematical consistency, 
+technical-term tooltips (e.g. clickable definitions), and more natural revision so that AI-edited text is less detectable.</li>
+</ul>
+</div>
+<h2>4. Individual Reports</h2><div class='card'><p class='muted'>Per-student response reports (matched only) are in the <code>students/</code> folder. Non-respondents: <code>students_not_completed.md</code>. No personal data in this report.</p></div></div></body></html>
