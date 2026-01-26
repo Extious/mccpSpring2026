@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parrot Paper Structure: Interconnections</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #eee;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.4em; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 0.9em; }
+        
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .network-panel {
+            flex: 1;
+            padding: 20px;
+            position: relative;
+            overflow: auto;
+        }
+        
+        .network-svg {
+            width: 100%;
+            height: 650px;
+        }
+        
+        .detail-panel {
+            width: 400px;
+            background: #16213e;
+            padding: 20px;
+            border-left: 1px solid #333;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
+        }
+        .detail-title {
+            font-size: 1.1em;
+            color: #667eea;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .detail-section h4 {
+            color: #a0aec0;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .detail-text {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            line-height: 1.6;
+            color: #cbd5e0;
+        }
+        .detail-text em {
+            color: #ffd700;
+            font-style: normal;
+        }
+        
+        .connections-list {
+            list-style: none;
+        }
+        .connections-list li {
+            background: #1a1a2e;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .connections-list li:hover {
+            background: #2d3748;
+        }
+        .arrow { color: #667eea; }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .node:hover { filter: brightness(1.2); }
+        .node-circle {
+            stroke: #fff;
+            stroke-width: 2;
+        }
+        .node-text {
+            fill: #fff;
+            font-size: 11px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .node-label {
+            fill: #a0aec0;
+            font-size: 10px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        
+        .edge {
+            stroke: #4a5568;
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.6;
+        }
+        .edge.highlighted {
+            stroke: #ffd700;
+            stroke-width: 3;
+            opacity: 1;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .selected { 
+            stroke: #ffd700 !important; 
+            stroke-width: 4 !important; 
+        }
+        
+        .instruction {
+            text-align: center;
+            padding: 10px;
+            background: #16213e;
+            color: #a0aec0;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Parrot: Efficient Serving of LLM-based Applications with Semantic Variable</h1>
+        <p>Chaofan Lin et al. | Microsoft Research | OSDI 2024 | arXiv:2405.19888</p>
+    </div>
+    
+    <div class="instruction">Click on any node to see its text excerpt and connections</div>
+    
+    <div class="main-container">
+        <div class="network-panel">
+            <svg class="network-svg" id="network">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568"/>
+                    </marker>
+                    <marker id="arrowhead-gold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#ffd700"/>
+                    </marker>
+                </defs>
+                
+                <!-- Edges -->
+                <g id="edges">
+                    <!-- Motivation to Problems -->
+                    <path class="edge" id="edge-motiv-prob1" d="M 120,180 Q 180,200 200,250" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-motiv-prob2" d="M 120,180 Q 120,230 120,280" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-motiv-prob3" d="M 120,180 Q 60,230 40,280" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Problems to Semantic Variable -->
+                    <path class="edge" id="edge-prob1-sv" d="M 200,310 Q 280,350 350,350" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-prob2-sv" d="M 120,340 Q 220,370 350,350" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-prob3-sv" d="M 40,340 Q 180,400 350,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Semantic Variable to Optimizations -->
+                    <path class="edge" id="edge-sv-opt1" d="M 450,350 Q 480,300 500,250" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-sv-opt2" d="M 450,350 Q 530,350 600,320" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-sv-opt3" d="M 450,350 Q 520,400 580,430" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Semantic Variable to DAG -->
+                    <path class="edge" id="edge-sv-dag" d="M 400,390 Q 350,450 350,500" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- DAG to Optimizations -->
+                    <path class="edge" id="edge-dag-opt1" d="M 350,560 Q 400,500 500,250" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-dag-opt2" d="M 350,560 Q 450,500 600,320" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-dag-opt3" d="M 350,560 Q 450,520 580,430" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Optimizations to Eval -->
+                    <path class="edge" id="edge-opt1-eval" d="M 500,190 Q 600,150 680,200" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-opt2-eval" d="M 660,320 Q 680,280 680,250" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-opt3-eval" d="M 580,430 Q 650,380 680,280" marker-end="url(#arrowhead)"/>
+                </g>
+                
+                <!-- Nodes -->
+                <g id="nodes">
+                    <!-- Section Labels -->
+                    <text x="80" y="100" fill="#dcfce7" font-size="12" font-weight="bold">MOTIVATION</text>
+                    <text x="80" y="250" fill="#fee2e2" font-size="12" font-weight="bold">PROBLEMS</text>
+                    <text x="360" y="310" fill="#e0e7ff" font-size="12" font-weight="bold">ABSTRACTION</text>
+                    <text x="550" y="180" fill="#fef3c7" font-size="12" font-weight="bold">OPTIMIZATIONS</text>
+                    <text x="650" y="160" fill="#ede9fe" font-size="12" font-weight="bold">RESULTS</text>
+                    
+                    <!-- Motivation Node -->
+                    <g class="node" data-id="motiv" onclick="selectNode('motiv')">
+                        <circle class="node-circle" cx="120" cy="150" r="35" fill="#48bb78"/>
+                        <text class="node-text" x="120" y="146">LLM</text>
+                        <text class="node-text" x="120" y="160" font-size="9">Apps Rise</text>
+                        <text class="node-label" x="120" y="200">AI Agents Era</text>
+                    </g>
+                    
+                    <!-- Problem 1: Overhead -->
+                    <g class="node" data-id="prob1" onclick="selectNode('prob1')">
+                        <circle class="node-circle" cx="200" cy="280" r="28" fill="#e53e3e"/>
+                        <text class="node-text" x="200" y="276">P1</text>
+                        <text class="node-text" x="200" y="290" font-size="8">Overhead</text>
+                        <text class="node-label" x="200" y="320">30-50% Latency</text>
+                    </g>
+                    
+                    <!-- Problem 2: Scheduling -->
+                    <g class="node" data-id="prob2" onclick="selectNode('prob2')">
+                        <circle class="node-circle" cx="120" cy="310" r="28" fill="#e53e3e"/>
+                        <text class="node-text" x="120" y="306">P2</text>
+                        <text class="node-text" x="120" y="320" font-size="8">Scheduling</text>
+                        <text class="node-label" x="120" y="350">Misaligned Goals</text>
+                    </g>
+                    
+                    <!-- Problem 3: Redundancy -->
+                    <g class="node" data-id="prob3" onclick="selectNode('prob3')">
+                        <circle class="node-circle" cx="40" cy="310" r="28" fill="#e53e3e"/>
+                        <text class="node-text" x="40" y="306">P3</text>
+                        <text class="node-text" x="40" y="320" font-size="8">Redundant</text>
+                        <text class="node-label" x="40" y="350">Prompt Waste</text>
+                    </g>
+                    
+                    <!-- Semantic Variable (Core) -->
+                    <g class="node" data-id="sv" onclick="selectNode('sv')">
+                        <circle class="node-circle" cx="400" cy="350" r="48" fill="#667eea"/>
+                        <text class="node-text" x="400" y="342">Semantic</text>
+                        <text class="node-text" x="400" y="358">Variable</text>
+                        <text class="node-label" x="400" y="415">Core Abstraction</text>
+                    </g>
+                    
+                    <!-- DAG Analysis -->
+                    <g class="node" data-id="dag" onclick="selectNode('dag')">
+                        <circle class="node-circle" cx="350" cy="530" r="30" fill="#9f7aea"/>
+                        <text class="node-text" x="350" y="526">DAG</text>
+                        <text class="node-text" x="350" y="540" font-size="9">Analysis</text>
+                        <text class="node-label" x="350" y="575">Dataflow Graph</text>
+                    </g>
+                    
+                    <!-- Optimization 1: Dependency Execution -->
+                    <g class="node" data-id="opt1" onclick="selectNode('opt1')">
+                        <circle class="node-circle" cx="500" cy="220" r="28" fill="#ed8936"/>
+                        <text class="node-text" x="500" y="216">Dep</text>
+                        <text class="node-text" x="500" y="230" font-size="8">Exec</text>
+                        <text class="node-label" x="500" y="260">Pipeline</text>
+                    </g>
+                    
+                    <!-- Optimization 2: Performance Deduction -->
+                    <g class="node" data-id="opt2" onclick="selectNode('opt2')">
+                        <circle class="node-circle" cx="620" cy="290" r="28" fill="#ed8936"/>
+                        <text class="node-text" x="620" y="286">Perf</text>
+                        <text class="node-text" x="620" y="300" font-size="8">Deduce</text>
+                        <text class="node-label" x="620" y="330">Smart Schedule</text>
+                    </g>
+                    
+                    <!-- Optimization 3: Prompt Sharing -->
+                    <g class="node" data-id="opt3" onclick="selectNode('opt3')">
+                        <circle class="node-circle" cx="580" cy="430" r="28" fill="#ed8936"/>
+                        <text class="node-text" x="580" y="426">Prompt</text>
+                        <text class="node-text" x="580" y="440" font-size="8">Share</text>
+                        <text class="node-label" x="580" y="470">KV Reuse</text>
+                    </g>
+                    
+                    <!-- Evaluation Node -->
+                    <g class="node" data-id="eval" onclick="selectNode('eval')">
+                        <circle class="node-circle" cx="680" cy="220" r="38" fill="#8b5cf6"/>
+                        <text class="node-text" x="680" y="212">11.7x</text>
+                        <text class="node-text" x="680" y="228" font-size="9">Speedup</text>
+                        <text class="node-label" x="680" y="275">Order of Magnitude</text>
+                    </g>
+                </g>
+            </svg>
+            
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div> Motivation</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div> Problems</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#667eea"></div> Core Abstraction</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div> Analysis Primitives</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ed8936"></div> Optimizations</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#8b5cf6"></div> Evaluation</div>
+            </div>
+        </div>
+        
+        <div class="detail-panel" id="detail-panel">
+            <div class="detail-title" id="detail-title">Select a node to view details</div>
+            <div id="detail-content">
+                <p style="color:#718096;">Click on any node in the network diagram to see its text excerpt and connections to other parts of the paper.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const nodeData = {
+            motiv: {
+                title: "Motivation: Rise of LLM Applications",
+                type: "Context",
+                text: `"The rise of large language models (LLMs) has enabled <em>LLM-based applications</em> (a.k.a. AI agents or co-pilots), a new software paradigm that combines the strength of LLM and conventional software."
+
+"It is believed such LLM-based applications will become the <em>mainstream applications</em> in the near future."
+
+The paper anchors motivation in <em>industry-scale adoption</em>, not just academic interest.`,
+                connections: [
+                    {to: "prob1", desc: "Reveals overhead problem"},
+                    {to: "prob2", desc: "Reveals scheduling mismatch"},
+                    {to: "prob3", desc: "Reveals redundant computation"}
+                ],
+                usedBy: ["Establishes relevance and urgency"]
+            },
+            prob1: {
+                title: "Problem 1: Excessive Overhead",
+                type: "Problem",
+                text: `"We find there is a significant portion of the latency... originates <em>outside the LLM engine (30-50%)</em>."
+
+This overhead comes from:
+- Consecutive request serialization
+- Network round-trips
+- Context re-establishment
+
+<em>Empirical measurement</em> validates the problem with production data.`,
+                connections: [
+                    {to: "sv", desc: "Solved by semantic variable pipeline"}
+                ],
+                usedBy: ["Justifies dependency execution optimization"]
+            },
+            prob2: {
+                title: "Problem 2: Misaligned Scheduling",
+                type: "Problem",
+                text: `"Public LLM services only observe tons of individual requests, <em>without knowing any application-level information</em>..."
+
+The service optimizes per-request metrics, but applications care about <em>end-to-end latency</em>.
+
+This is a <em>structural mismatch</em>, not a tuning issue.`,
+                connections: [
+                    {to: "sv", desc: "Exposes app-level semantics"}
+                ],
+                usedBy: ["Justifies performance deduction optimization"]
+            },
+            prob3: {
+                title: "Problem 3: Redundant Computation",
+                type: "Problem",
+                text: `Multiple requests from the same application often share <em>common prompt prefixes</em>.
+
+Without application-level visibility, the LLM service:
+- Cannot identify sharing opportunities
+- Recomputes KV caches repeatedly
+- Wastes GPU memory and compute`,
+                connections: [
+                    {to: "sv", desc: "Enables prompt sharing detection"}
+                ],
+                usedBy: ["Justifies prompt sharing optimization"]
+            },
+            sv: {
+                title: "Semantic Variable: Core Abstraction",
+                type: "Abstraction",
+                text: `"A <em>Semantic Variable</em> is defined as an input or output variable of a semantic function..."
+
+"A Semantic Variable annotates an input/output variable in the prompt of a request, and creates the <em>data pipeline</em> when connecting multiple LLM requests."
+
+This is the <em>waist of the hourglass</em>:
+- Everything before motivates it
+- Everything after depends on it
+
+<em>The real contribution is Semantic Variable as a unifying lens.</em>`,
+                connections: [
+                    {to: "dag", desc: "Enables dataflow analysis"},
+                    {to: "opt1", desc: "Enables dependency execution"},
+                    {to: "opt2", desc: "Enables performance deduction"},
+                    {to: "opt3", desc: "Enables prompt sharing"}
+                ],
+                usedBy: ["Central abstraction unifying all optimizations"]
+            },
+            dag: {
+                title: "DAG Analysis Primitives",
+                type: "Analysis",
+                text: `"Parrot maintains a <em>DAG-like data structure</em> in each user's registered session."
+
+The DAG captures:
+- Request dependencies
+- Data flow between semantic variables
+- Shared prefix patterns
+
+This borrows from <em>compiler theory</em> ("dataflow analysis") to legitimize the approach.`,
+                connections: [
+                    {to: "opt1", desc: "Provides dependency info"},
+                    {to: "opt2", desc: "Provides cost model inputs"},
+                    {to: "opt3", desc: "Identifies sharing opportunities"}
+                ],
+                usedBy: ["Runtime analysis infrastructure"]
+            },
+            opt1: {
+                title: "Optimization 1: Dependency Execution",
+                type: "Optimization",
+                text: `With the DAG, Parrot can:
+- <em>Pipeline</em> dependent requests
+- Eliminate network round-trips
+- Stream outputs to downstream requests
+
+This directly addresses the <em>30-50% overhead</em> from Problem 1.`,
+                connections: [
+                    {to: "eval", desc: "Contributes to speedup"}
+                ],
+                usedBy: ["Pipeline execution benchmarks"]
+            },
+            opt2: {
+                title: "Optimization 2: Performance Deduction",
+                type: "Optimization",
+                text: `Parrot can <em>deduce performance requirements</em> from the application graph:
+- Critical path analysis
+- Priority assignment
+- Resource allocation
+
+This aligns scheduling with <em>application-level objectives</em>.`,
+                connections: [
+                    {to: "eval", desc: "Contributes to throughput"}
+                ],
+                usedBy: ["Multi-tenant benchmarks"]
+            },
+            opt3: {
+                title: "Optimization 3: Prompt Sharing",
+                type: "Optimization",
+                text: `Semantic variables reveal <em>common prefix patterns</em>:
+- Same system prompt across requests
+- Shared context in multi-turn conversations
+- Template reuse in batch processing
+
+Parrot shares KV caches across requests, reducing compute by up to <em>12x</em>.`,
+                connections: [
+                    {to: "eval", desc: "Contributes to throughput gains"}
+                ],
+                usedBy: ["KV cache sharing benchmarks"]
+            },
+            eval: {
+                title: "Evaluation: 11.7x Speedup",
+                type: "Evaluation",
+                text: `"Extensive evaluations demonstrate that Parrot can achieve up to an <em>order-of-magnitude improvement</em> for popular and practical use cases."
+
+Key results:
+- <em>11.7x speedup</em> for latency-critical workloads
+- <em>12x higher throughput</em> for batch processing
+- Consistent gains across model sizes and workloads
+
+The evaluation validates <em>end-to-end application performance</em>, not just micro-benchmarks.`,
+                connections: [],
+                usedBy: ["Final validation of the Semantic Variable abstraction"]
+            }
+        };
+
+        let selectedNode = null;
+
+        function selectNode(id) {
+            document.querySelectorAll('.node-circle').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.edge').forEach(e => {
+                e.classList.remove('highlighted');
+                e.setAttribute('marker-end', 'url(#arrowhead)');
+            });
+            
+            const node = document.querySelector(`[data-id="${id}"] .node-circle`);
+            if (node) node.classList.add('selected');
+            
+            const data = nodeData[id];
+            if (data && data.connections) {
+                data.connections.forEach(conn => {
+                    const edge = document.getElementById(`edge-${id}-${conn.to}`);
+                    if (edge) {
+                        edge.classList.add('highlighted');
+                        edge.setAttribute('marker-end', 'url(#arrowhead-gold)');
+                    }
+                });
+            }
+            
+            updateDetailPanel(id);
+            selectedNode = id;
+        }
+
+        function updateDetailPanel(id) {
+            const data = nodeData[id];
+            if (!data) return;
+            
+            document.getElementById('detail-title').textContent = data.title;
+            
+            let html = `
+                <div class="detail-section">
+                    <h4>Text Excerpt</h4>
+                    <div class="detail-text">${data.text}</div>
+                </div>
+            `;
+            
+            if (data.connections && data.connections.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>Connects To</h4>
+                        <ul class="connections-list">
+                            ${data.connections.map(c => `
+                                <li onclick="selectNode('${c.to}')">
+                                    <span class="arrow">-></span>
+                                    <span><strong>${nodeData[c.to]?.title.split(':')[0] || c.to}</strong>: ${c.desc}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (data.usedBy) {
+                html += `
+                    <div class="detail-section">
+                        <h4>Role in Paper</h4>
+                        <div class="detail-text">${Array.isArray(data.usedBy) ? data.usedBy.join(', ') : data.usedBy}</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('detail-content').innerHTML = html;
+        }
+
+        selectNode('sv');
+    </script>
+</body>
+</html>
