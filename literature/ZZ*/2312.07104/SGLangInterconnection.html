@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SGLang Paper Structure: Interconnections</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a1a2e;
+            min-height: 100vh;
+            color: #eee;
+        }
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            padding: 20px;
+            text-align: center;
+        }
+        .header h1 { font-size: 1.4em; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 0.9em; }
+        
+        .main-container {
+            display: flex;
+            min-height: calc(100vh - 100px);
+        }
+        
+        .network-panel {
+            flex: 1;
+            padding: 20px;
+            position: relative;
+            overflow: auto;
+        }
+        
+        .network-svg {
+            width: 100%;
+            height: 650px;
+        }
+        
+        .detail-panel {
+            width: 400px;
+            background: #16213e;
+            padding: 20px;
+            border-left: 1px solid #333;
+            overflow-y: auto;
+            max-height: calc(100vh - 100px);
+        }
+        .detail-title {
+            font-size: 1.1em;
+            color: #4a90e2;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #333;
+        }
+        .detail-section {
+            margin-bottom: 20px;
+        }
+        .detail-section h4 {
+            color: #a0aec0;
+            font-size: 0.8em;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+        .detail-text {
+            background: #1a1a2e;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            line-height: 1.6;
+            color: #cbd5e0;
+        }
+        .detail-text em {
+            color: #ffd700;
+            font-style: normal;
+        }
+        
+        .connections-list {
+            list-style: none;
+        }
+        .connections-list li {
+            background: #1a1a2e;
+            padding: 8px 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .connections-list li:hover {
+            background: #2d3748;
+        }
+        .arrow { color: #4a90e2; }
+        
+        .node {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .node:hover { filter: brightness(1.2); }
+        .node-circle {
+            stroke: #fff;
+            stroke-width: 2;
+        }
+        .node-text {
+            fill: #fff;
+            font-size: 11px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        .node-label {
+            fill: #a0aec0;
+            font-size: 10px;
+            text-anchor: middle;
+            pointer-events: none;
+        }
+        
+        .edge {
+            stroke: #4a5568;
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.6;
+        }
+        .edge.highlighted {
+            stroke: #ffd700;
+            stroke-width: 3;
+            opacity: 1;
+        }
+        
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(22, 33, 62, 0.95);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 5px 0;
+        }
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .selected { 
+            stroke: #ffd700 !important; 
+            stroke-width: 4 !important; 
+        }
+        
+        .instruction {
+            text-align: center;
+            padding: 10px;
+            background: #16213e;
+            color: #a0aec0;
+            font-size: 0.85em;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>SGLang: Efficient Execution of Structured Language Model Programs</h1>
+        <p>Lianmin Zheng et al. | Stanford, UC Berkeley | arXiv:2312.07104</p>
+    </div>
+    
+    <div class="instruction">Click on any node to see its text excerpt and connections</div>
+    
+    <div class="main-container">
+        <div class="network-panel">
+            <svg class="network-svg" id="network">
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#4a5568"/>
+                    </marker>
+                    <marker id="arrowhead-gold" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#ffd700"/>
+                    </marker>
+                </defs>
+                
+                <!-- Edges -->
+                <g id="edges">
+                    <!-- Problem to Reframing -->
+                    <path class="edge" id="edge-prob-reframe" d="M 180,150 Q 250,120 320,150" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Reframing to Frontend -->
+                    <path class="edge" id="edge-reframe-front" d="M 380,150 Q 420,180 420,220" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Reframing to Runtime -->
+                    <path class="edge" id="edge-reframe-runtime" d="M 380,150 Q 500,150 540,200" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Frontend to RadixAttn -->
+                    <path class="edge" id="edge-front-radix" d="M 420,280 Q 350,320 280,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Frontend to FSM -->
+                    <path class="edge" id="edge-front-fsm" d="M 420,280 Q 420,320 420,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Frontend to Spec -->
+                    <path class="edge" id="edge-front-spec" d="M 420,280 Q 490,320 560,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Runtime to RadixAttn -->
+                    <path class="edge" id="edge-runtime-radix" d="M 540,260 Q 420,300 280,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Runtime to FSM -->
+                    <path class="edge" id="edge-runtime-fsm" d="M 540,260 Q 480,300 420,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Runtime to Spec -->
+                    <path class="edge" id="edge-runtime-spec" d="M 540,260 L 560,350" marker-end="url(#arrowhead)"/>
+                    
+                    <!-- Optimizations to Eval -->
+                    <path class="edge" id="edge-radix-eval" d="M 280,410 Q 350,480 420,520" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-fsm-eval" d="M 420,410 L 420,520" marker-end="url(#arrowhead)"/>
+                    <path class="edge" id="edge-spec-eval" d="M 560,410 Q 490,480 420,520" marker-end="url(#arrowhead)"/>
+                </g>
+                
+                <!-- Nodes -->
+                <g id="nodes">
+                    <!-- Section Labels -->
+                    <text x="120" y="100" fill="#e53e3e" font-size="12" font-weight="bold">PROBLEM</text>
+                    <text x="320" y="100" fill="#48bb78" font-size="12" font-weight="bold">REFRAMING</text>
+                    <text x="420" y="180" fill="#9f7aea" font-size="12" font-weight="bold">LANGUAGE</text>
+                    <text x="540" y="180" fill="#ed8936" font-size="12" font-weight="bold">RUNTIME</text>
+                    <text x="380" y="320" fill="#38b2ac" font-size="12" font-weight="bold">OPTIMIZATIONS</text>
+                    <text x="420" y="500" fill="#667eea" font-size="12" font-weight="bold">EVALUATION</text>
+                    
+                    <!-- Problem Node -->
+                    <g class="node" data-id="prob" onclick="selectNode('prob')">
+                        <circle class="node-circle" cx="120" cy="150" r="35" fill="#e53e3e"/>
+                        <text class="node-text" x="120" y="146">LM</text>
+                        <text class="node-text" x="120" y="160" font-size="9">Programs</text>
+                        <text class="node-label" x="120" y="200">Inefficiency Gap</text>
+                    </g>
+                    
+                    <!-- Reframing Node -->
+                    <g class="node" data-id="reframe" onclick="selectNode('reframe')">
+                        <circle class="node-circle" cx="320" cy="150" r="40" fill="#48bb78"/>
+                        <text class="node-text" x="320" y="146">Key</text>
+                        <text class="node-text" x="320" y="160" font-size="9">Insight</text>
+                        <text class="node-label" x="320" y="205">Program Execution</text>
+                    </g>
+                    
+                    <!-- Frontend Node -->
+                    <g class="node" data-id="front" onclick="selectNode('front')">
+                        <circle class="node-circle" cx="420" cy="250" r="35" fill="#9f7aea"/>
+                        <text class="node-text" x="420" y="246">DSL</text>
+                        <text class="node-text" x="420" y="260" font-size="9">Frontend</text>
+                        <text class="node-label" x="420" y="298">Primitives</text>
+                    </g>
+                    
+                    <!-- Runtime Node -->
+                    <g class="node" data-id="runtime" onclick="selectNode('runtime')">
+                        <circle class="node-circle" cx="560" cy="230" r="35" fill="#ed8936"/>
+                        <text class="node-text" x="560" y="226">Runtime</text>
+                        <text class="node-text" x="560" y="240" font-size="9">Engine</text>
+                        <text class="node-label" x="560" y="278">Optimizations</text>
+                    </g>
+                    
+                    <!-- RadixAttention Node -->
+                    <g class="node" data-id="radix" onclick="selectNode('radix')">
+                        <circle class="node-circle" cx="280" cy="380" r="32" fill="#38b2ac"/>
+                        <text class="node-text" x="280" y="376">Radix</text>
+                        <text class="node-text" x="280" y="390" font-size="9">Attention</text>
+                        <text class="node-label" x="280" y="425">KV Cache Reuse</text>
+                    </g>
+                    
+                    <!-- FSM Node -->
+                    <g class="node" data-id="fsm" onclick="selectNode('fsm')">
+                        <circle class="node-circle" cx="420" cy="380" r="32" fill="#38b2ac"/>
+                        <text class="node-text" x="420" y="376">FSM</text>
+                        <text class="node-text" x="420" y="390" font-size="9">Decoding</text>
+                        <text class="node-label" x="420" y="425">Structured Output</text>
+                    </g>
+                    
+                    <!-- Speculation Node -->
+                    <g class="node" data-id="spec" onclick="selectNode('spec')">
+                        <circle class="node-circle" cx="560" cy="380" r="32" fill="#38b2ac"/>
+                        <text class="node-text" x="560" y="376">API</text>
+                        <text class="node-text" x="560" y="390" font-size="9">Speculation</text>
+                        <text class="node-label" x="560" y="425">Black-box Models</text>
+                    </g>
+                    
+                    <!-- Evaluation Node -->
+                    <g class="node" data-id="eval" onclick="selectNode('eval')">
+                        <circle class="node-circle" cx="420" cy="550" r="40" fill="#667eea"/>
+                        <text class="node-text" x="420" y="546">6.4x</text>
+                        <text class="node-text" x="420" y="560" font-size="9">Speedup</text>
+                        <text class="node-label" x="420" y="605">End-to-End Results</text>
+                    </g>
+                </g>
+            </svg>
+            
+            <div class="legend">
+                <div class="legend-item"><div class="legend-dot" style="background:#e53e3e"></div> Problem Space</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#48bb78"></div> Key Insight</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#9f7aea"></div> Language Design</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#ed8936"></div> Runtime System</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#38b2ac"></div> Optimizations</div>
+                <div class="legend-item"><div class="legend-dot" style="background:#667eea"></div> Evaluation</div>
+            </div>
+        </div>
+        
+        <div class="detail-panel" id="detail-panel">
+            <div class="detail-title" id="detail-title">Select a node to view details</div>
+            <div id="detail-content">
+                <p style="color:#718096;">Click on any node in the network diagram to see its text excerpt and connections to other parts of the paper.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const nodeData = {
+            prob: {
+                title: "Problem: LM Program Inefficiency",
+                type: "Problem",
+                text: `"Large language models (LLMs) are increasingly used for complex tasks that require <em>multiple generation calls</em>, advanced prompting techniques, control flow, and structured inputs/outputs."
+
+"However, efficient systems are lacking for programming and executing these applications."
+
+The paper identifies <em>two orthogonal bottlenecks</em>:
+1. Programming difficulty
+2. Execution inefficiency`,
+                connections: [
+                    {to: "reframe", desc: "Motivates the key reframing"}
+                ],
+                usedBy: ["Justifies the entire system design"]
+            },
+            reframe: {
+                title: "Key Insight: LLM as Program Execution",
+                type: "Reframing",
+                text: `"We refer to these programs as <em>Language Model Programs</em> (LM Programs)."
+
+This is a <em>naming power move</em> - it legitimizes the research problem and creates conceptual ownership.
+
+"The core idea is to systematically exploit the <em>multi-call structure</em> in LM programs for efficient execution."
+
+This sentence functions as the <em>thesis statement</em> for the entire paper.`,
+                connections: [
+                    {to: "front", desc: "Drives language design choices"},
+                    {to: "runtime", desc: "Informs runtime architecture"}
+                ],
+                usedBy: ["Central abstraction unifying all contributions"]
+            },
+            front: {
+                title: "Frontend: SGLang DSL",
+                type: "Language",
+                text: `"SGLang is a <em>domain-specific language embedded in Python</em>."
+
+Key primitives:
+- Generation control
+- Parallelism primitives
+- Structured output specification
+
+The language design follows <em>example-first</em> pedagogy: abstractions are introduced through examples, not definitions.`,
+                connections: [
+                    {to: "radix", desc: "Enables KV cache sharing patterns"},
+                    {to: "fsm", desc: "Provides structured output specs"},
+                    {to: "spec", desc: "Exposes parallelism opportunities"}
+                ],
+                usedBy: ["Programmer interface for optimizations"]
+            },
+            runtime: {
+                title: "Runtime Engine",
+                type: "System",
+                text: `"The runtime accelerates execution with novel optimizations like <em>RadixAttention</em> for KV cache reuse and <em>compressed finite state machines</em> for faster structured output decoding."
+
+The runtime is the <em>execution substrate</em> that realizes the optimizations enabled by the language design.`,
+                connections: [
+                    {to: "radix", desc: "Implements RadixAttention"},
+                    {to: "fsm", desc: "Implements FSM decoding"},
+                    {to: "spec", desc: "Implements API speculation"}
+                ],
+                usedBy: ["Core execution engine"]
+            },
+            radix: {
+                title: "RadixAttention: KV Cache Reuse",
+                type: "Optimization",
+                text: `"Unlike existing systems that <em>discard the KV cache</em> after a generation request finishes..."
+
+RadixAttention uses a <em>radix tree</em> data structure to:
+- Retain KV caches across requests
+- Enable prefix sharing
+- Support multi-tenant scenarios
+
+This translates the <em>multi-call structure</em> of LM programs into cache efficiency.`,
+                connections: [
+                    {to: "eval", desc: "Contributes to throughput gains"}
+                ],
+                usedBy: ["Evaluation benchmarks"]
+            },
+            fsm: {
+                title: "Compressed FSM Decoding",
+                type: "Optimization",
+                text: `"Existing systems... can only decode <em>one token at a time</em>."
+
+Key insight: Reframe decoding as <em>graph compression</em>, not just token masking.
+
+The compressed FSM allows:
+- Batch token generation for deterministic segments
+- Reduced overhead for JSON/structured outputs`,
+                connections: [
+                    {to: "eval", desc: "Enables structured output speedup"}
+                ],
+                usedBy: ["JSON decoding benchmarks"]
+            },
+            spec: {
+                title: "API Speculative Execution",
+                type: "Optimization",
+                text: `"For these models, we can only call a <em>black-box API endpoint</em>."
+
+This section prevents the reviewer objection: "This only works if you control the model."
+
+Speculative execution:
+- Predicts likely request patterns
+- Parallelizes independent calls
+- Amortizes API latency`,
+                connections: [
+                    {to: "eval", desc: "Extends to closed-source models"}
+                ],
+                usedBy: ["OpenAI API benchmarks"]
+            },
+            eval: {
+                title: "Evaluation: 6.4x Throughput",
+                type: "Evaluation",
+                text: `"Experiments show that SGLang achieves up to <em>6.4x higher throughput</em> compared to state-of-the-art inference systems."
+
+Evaluation axes:
+- Workloads: agents, reasoning, RAG, JSON
+- Models: 7B to 70B, multimodal, API
+- Hardware: A10G, A100
+- Baselines: Guidance, vLLM, LMQL
+
+<em>Breadth beats depth</em> in systems evaluation.`,
+                connections: [],
+                usedBy: ["Final validation of contributions"]
+            }
+        };
+
+        let selectedNode = null;
+
+        function selectNode(id) {
+            document.querySelectorAll('.node-circle').forEach(c => c.classList.remove('selected'));
+            document.querySelectorAll('.edge').forEach(e => {
+                e.classList.remove('highlighted');
+                e.setAttribute('marker-end', 'url(#arrowhead)');
+            });
+            
+            const node = document.querySelector(`[data-id="${id}"] .node-circle`);
+            if (node) node.classList.add('selected');
+            
+            const data = nodeData[id];
+            if (data && data.connections) {
+                data.connections.forEach(conn => {
+                    const edge = document.getElementById(`edge-${id}-${conn.to}`);
+                    if (edge) {
+                        edge.classList.add('highlighted');
+                        edge.setAttribute('marker-end', 'url(#arrowhead-gold)');
+                    }
+                });
+            }
+            
+            updateDetailPanel(id);
+            selectedNode = id;
+        }
+
+        function updateDetailPanel(id) {
+            const data = nodeData[id];
+            if (!data) return;
+            
+            document.getElementById('detail-title').textContent = data.title;
+            
+            let html = `
+                <div class="detail-section">
+                    <h4>Text Excerpt</h4>
+                    <div class="detail-text">${data.text}</div>
+                </div>
+            `;
+            
+            if (data.connections && data.connections.length > 0) {
+                html += `
+                    <div class="detail-section">
+                        <h4>Connects To</h4>
+                        <ul class="connections-list">
+                            ${data.connections.map(c => `
+                                <li onclick="selectNode('${c.to}')">
+                                    <span class="arrow">-></span>
+                                    <span><strong>${nodeData[c.to]?.title.split(':')[0] || c.to}</strong>: ${c.desc}</span>
+                                </li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                `;
+            }
+            
+            if (data.usedBy) {
+                html += `
+                    <div class="detail-section">
+                        <h4>Role in Paper</h4>
+                        <div class="detail-text">${Array.isArray(data.usedBy) ? data.usedBy.join(', ') : data.usedBy}</div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('detail-content').innerHTML = html;
+        }
+
+        selectNode('reframe');
+    </script>
+</body>
+</html>
