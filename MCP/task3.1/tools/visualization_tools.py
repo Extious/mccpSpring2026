@@ -88,28 +88,54 @@ async def generate_interconnected_html(
 
 def generate_hierarchical_content(structure: Dict, template: str) -> str:
     """Generate hierarchical HTML content"""
+    import html as html_module
     
     title = structure.get("title", "Paper Structure")
     author = structure.get("author", "")
     sections = structure.get("sections", [])
     
+    # Escape HTML in title and author
+    title = html_module.escape(str(title))
+    author = html_module.escape(str(author))
+    
     # Build sections HTML
     sections_html = ""
     for section in sections:
+        heading = html_module.escape(str(section.get('heading', '')))
+        excerpt = html_module.escape(str(section.get('text_excerpt', '')))
+        level = section.get('level', 1)
+        
         sections_html += f"""
-        <div class="section level-{section['level']}">
-            <h{section['level']} class="section-heading">{section['heading']}</h{section['level']}>
-            <p class="section-excerpt">{section.get('text_excerpt', '')}</p>
+        <div class="section level-{level}">
+            <h{min(level, 6)} class="section-heading">{heading}</h{min(level, 6)}>
+            <p class="section-excerpt">{excerpt}</p>
         """
         
         # Add subsections
         for subsection in section.get("subsections", []):
+            sub_heading = html_module.escape(str(subsection.get('heading', '')))
+            sub_excerpt = html_module.escape(str(subsection.get('text_excerpt', '')))
+            sub_level = subsection.get('level', 2)
+            
             sections_html += f"""
-            <div class="subsection level-{subsection['level']}">
-                <h{subsection['level']} class="subsection-heading">{subsection['heading']}</h{subsection['level']}>
-                <p class="subsection-excerpt">{subsection.get('text_excerpt', '')}</p>
+            <div class="subsection level-{sub_level}">
+                <h{min(sub_level, 6)} class="subsection-heading">{sub_heading}</h{min(sub_level, 6)}>
+                <p class="subsection-excerpt">{sub_excerpt}</p>
             </div>
             """
+            
+            # Add subsubsections
+            for subsubsection in subsection.get("subsubsections", []):
+                subsub_heading = html_module.escape(str(subsubsection.get('heading', '')))
+                subsub_excerpt = html_module.escape(str(subsubsection.get('text_excerpt', '')))
+                subsub_level = subsubsection.get('level', 3)
+                
+                sections_html += f"""
+                <div class="subsubsection level-{subsub_level}">
+                    <h{min(subsub_level, 6)} class="subsubsection-heading">{subsub_heading}</h{min(subsub_level, 6)}>
+                    <p class="subsubsection-excerpt">{subsub_excerpt}</p>
+                </div>
+                """
         
         sections_html += "</div>"
     
@@ -123,31 +149,38 @@ def generate_hierarchical_content(structure: Dict, template: str) -> str:
 
 def generate_interconnected_content(structure: Dict, connections: Dict, template: str) -> str:
     """Generate interconnected HTML content with network visualization"""
+    import html as html_module
+    import json
     
     title = structure.get("title", "Paper Structure")
     sections = structure.get("sections", [])
     connections_list = connections.get("connections", [])
     
-    # Build sections data for JavaScript
-    sections_data = json.dumps([
-        {
+    # Escape title for HTML
+    title = html_module.escape(str(title))
+    
+    # Build sections data for JavaScript (escape for JSON)
+    sections_data_list = []
+    for i, section in enumerate(sections):
+        sections_data_list.append({
             "id": i,
-            "name": section["heading"],
-            "text": section.get("text_excerpt", ""),
-            "level": section["level"]
-        }
-        for i, section in enumerate(sections)
-    ])
+            "name": str(section.get("heading", "")),
+            "text": str(section.get("text_excerpt", "")),
+            "level": section.get("level", 1)
+        })
+    
+    sections_data = json.dumps(sections_data_list, ensure_ascii=False)
     
     # Build connections data for JavaScript
-    connections_data = json.dumps([
-        {
-            "source": conn["from"],
-            "target": conn["to"],
-            "type": conn.get("type", "unknown")
-        }
-        for conn in connections_list
-    ])
+    connections_data_list = []
+    for conn in connections_list:
+        connections_data_list.append({
+            "source": str(conn.get("from", "")),
+            "target": str(conn.get("to", "")),
+            "type": str(conn.get("type", "unknown"))
+        })
+    
+    connections_data = json.dumps(connections_data_list, ensure_ascii=False)
     
     # Replace placeholders
     html = template.replace("{{TITLE}}", title)

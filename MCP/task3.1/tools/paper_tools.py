@@ -6,6 +6,139 @@ from pathlib import Path
 from typing import Dict, List, Optional, Any
 
 
+def extract_balanced_braces(text: str, start_pos: int) -> Optional[str]:
+    """Extract content from balanced braces starting at start_pos"""
+    if start_pos >= len(text) or text[start_pos] != '{':
+        return None
+    
+    depth = 0
+    i = start_pos
+    start = start_pos + 1
+    
+    while i < len(text):
+        if text[i] == '{':
+            depth += 1
+        elif text[i] == '}':
+            depth -= 1
+            if depth == 0:
+                return text[start:i]
+        i += 1
+    
+    return None
+
+
+def clean_latex_text(text: str) -> str:
+    """Clean LaTeX commands and special characters for HTML display"""
+    if not text:
+        return ""
+    
+    # Remove LaTeX comments (lines starting with %)
+    lines = text.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        # Remove inline comments but preserve the line if it has content before %
+        if '%' in line:
+            comment_pos = line.find('%')
+            # Check if % is not part of a command or math
+            if comment_pos > 0 and line[comment_pos-1] != '\\':
+                line = line[:comment_pos]
+        cleaned_lines.append(line)
+    text = '\n'.join(cleaned_lines)
+    
+    # Convert citations to readable format
+    text = re.sub(r'\\cite\{([^}]+)\}', r'[citation: \1]', text)
+    text = re.sub(r'\\citep\{([^}]+)\}', r'[citation: \1]', text)
+    text = re.sub(r'\\citet\{([^}]+)\}', r'[citation: \1]', text)
+    
+    # Convert references to readable format
+    text = re.sub(r'\\ref\{([^}]+)\}', r'[ref: \1]', text)
+    text = re.sub(r'\\eqref\{([^}]+)\}', r'[eq: \1]', text)
+    
+    # Remove label commands (not needed for display)
+    text = re.sub(r'\\label\{[^}]+\}', '', text)
+    
+    # Convert math mode to readable format (inline)
+    text = re.sub(r'\$([^$]+)\$', r'[\1]', text)
+    # Convert display math
+    text = re.sub(r'\\\[(.*?)\\\]', r'[\1]', text, flags=re.DOTALL)
+    text = re.sub(r'\\\((.*?)\\\)', r'[\1]', text, flags=re.DOTALL)
+    text = re.sub(r'\$\$(.*?)\$\$', r'[\1]', text, flags=re.DOTALL)
+    
+    # Remove footnote commands but keep content if possible
+    text = re.sub(r'\\footnote\{([^}]+)\}', r' (note: \1)', text)
+    text = re.sub(r'\\tnoteref\{[^}]+\}', '', text)
+    text = re.sub(r'\\corref\{[^}]+\}', '', text)
+    text = re.sub(r'\\fnref\{[^}]+\}', '', text)
+    
+    # Remove common LaTeX formatting commands (keep content)
+    text = re.sub(r'\\textbf\{([^}]+)\}', r'\1', text)
+    text = re.sub(r'\\textit\{([^}]+)\}', r'\1', text)
+    text = re.sub(r'\\emph\{([^}]+)\}', r'\1', text)
+    text = re.sub(r'\\texttt\{([^}]+)\}', r'\1', text)
+    
+    # Remove remaining LaTeX commands (simple ones without nested braces)
+    # This handles commands like \section, \cite, etc. that we haven't caught
+    text = re.sub(r'\\([a-zA-Z@]+)\*?\s*', '', text)
+    
+    # Clean up remaining braces (simple ones)
+    # Be careful not to remove all braces - only simple {content} patterns
+    text = re.sub(r'\{([^{}]+)\}', r'\1', text)
+    
+    # Remove LaTeX special characters that escaped
+    text = re.sub(r'\\[^\w\s]', '', text)
+    
+    # Normalize whitespace
+    text = re.sub(r'\s+', ' ', text)
+    text = text.strip()
+    
+    # Escape HTML special characters (do this last)
+    text = html.escape(text)
+    
+    return text
+
+
+def extract_latex_title(content: str) -> str:
+    """Extract title from LaTeX, handling nested braces"""
+    # Try to find \title{...}
+    title_match = re.search(r'\\title\s*\{', content)
+    if not title_match:
+        return "Untitled Paper"
+    
+    start_pos = title_match.end() - 1  # Position of opening brace
+    title = extract_balanced_braces(content, start_pos)
+    
+    if title:
+        # Clean LaTeX commands from title
+        title = clean_latex_text(title)
+        # Remove footnote references
+        title = re.sub(r'\\tnoteref\{[^}]+\}', '', title)
+        title = re.sub(r'\\footnote\{[^}]+\}', '', title)
+        return title.strip() or "Untitled Paper"
+    
+    return "Untitled Paper"
+
+
+def extract_latex_author(content: str) -> str:
+    """Extract author from LaTeX, handling nested braces"""
+    # Try to find \author{...}
+    author_match = re.search(r'\\author\s*\{', content)
+    if not author_match:
+        return "Unknown"
+    
+    start_pos = author_match.end() - 1  # Position of opening brace
+    author = extract_balanced_braces(content, start_pos)
+    
+    if author:
+        # Clean LaTeX commands from author
+        author = clean_latex_text(author)
+        # Remove footnote references
+        author = re.sub(r'\\corref\{[^}]+\}', '', author)
+        author = re.sub(r'\\fnref\{[^}]+\}', '', author)
+        return author.strip() or "Unknown"
+    
+    return "Unknown"
+
+
 async def parse_paper_structure(file_path: Optional[str] = None, file_content: Optional[str] = None) -> Dict:
     """Parse paper structure from LaTeX, PDF, or Markdown"""
     
@@ -40,13 +173,11 @@ async def parse_paper_structure(file_path: Optional[str] = None, file_content: O
 def parse_latex_structure(content: str, source: str) -> Dict:
     """Parse LaTeX document structure"""
     
-    # Extract title
-    title_match = re.search(r'\\title\{([^}]+)\}', content)
-    title = title_match.group(1) if title_match else "Untitled Paper"
+    # Extract title (handling nested braces)
+    title = extract_latex_title(content)
     
-    # Extract author
-    author_match = re.search(r'\\author\{([^}]+)\}', content)
-    author = author_match.group(1) if author_match else "Unknown"
+    # Extract author (handling nested braces)
+    author = extract_latex_author(content)
     
     # Extract sections
     sections = []
@@ -63,16 +194,22 @@ def parse_latex_structure(content: str, source: str) -> Dict:
         heading = match.group(2)
         position = match.start()
         
-        # Get text excerpt (next 200 chars after heading)
+        # Clean heading (remove LaTeX commands)
+        heading = clean_latex_text(heading)
+        
+        # Get text excerpt (next 400 chars after heading, then clean)
         excerpt_start = match.end()
-        excerpt_end = min(excerpt_start + 200, len(content))
-        text_excerpt = content[excerpt_start:excerpt_end].strip()
-        text_excerpt = re.sub(r'\s+', ' ', text_excerpt)  # Normalize whitespace
+        excerpt_end = min(excerpt_start + 400, len(content))
+        raw_excerpt = content[excerpt_start:excerpt_end]
+        
+        # Clean the excerpt (removes LaTeX commands, comments, etc.)
+        text_excerpt = clean_latex_text(raw_excerpt)
+        text_excerpt = text_excerpt[:200] + "..." if len(text_excerpt) > 200 else text_excerpt
         
         section_data = {
             "level": get_section_level(level_type),
             "heading": heading,
-            "text_excerpt": text_excerpt[:150] + "..." if len(text_excerpt) > 150 else text_excerpt,
+            "text_excerpt": text_excerpt,
             "position": position
         }
         
@@ -241,6 +378,14 @@ async def analyze_section_interconnections(structure: Dict, file_path: Optional[
     sections = structure.get("sections", [])
     connections = []
     
+    if not sections:
+        return {
+            "status": "success",
+            "sections": sections,
+            "connections": connections,
+            "connection_count": 0
+        }
+    
     # Build section index
     section_index = {}
     for i, section in enumerate(sections):
@@ -257,7 +402,7 @@ async def analyze_section_interconnections(structure: Dict, file_path: Optional[
     
     # Analyze connections
     for i, section in enumerate(sections):
-        # Sequential connection to next section
+        # 1. Sequential connection to next section (always add)
         if i < len(sections) - 1:
             connections.append({
                 "from": section["heading"],
@@ -266,21 +411,7 @@ async def analyze_section_interconnections(structure: Dict, file_path: Optional[
                 "strength": "strong"
             })
         
-        # Check for references in text
-        text = section.get("text_excerpt", "").lower()
-        
-        # Look for method/results references
-        if "method" in text or "approach" in text:
-            for other_section in sections:
-                if "method" in other_section["heading"].lower():
-                    connections.append({
-                        "from": section["heading"],
-                        "to": other_section["heading"],
-                        "type": "references",
-                        "strength": "medium"
-                    })
-        
-        # Check subsections
+        # 2. Hierarchical connections (section to subsections)
         for subsection in section.get("subsections", []):
             connections.append({
                 "from": section["heading"],
@@ -288,10 +419,80 @@ async def analyze_section_interconnections(structure: Dict, file_path: Optional[
                 "type": "hierarchical",
                 "strength": "strong"
             })
+            
+            # Subsection to subsubsections
+            for subsubsection in subsection.get("subsubsections", []):
+                connections.append({
+                    "from": subsection["heading"],
+                    "to": subsubsection["heading"],
+                    "type": "hierarchical",
+                    "strength": "strong"
+                })
+        
+        # 3. Semantic connections based on keywords
+        text = section.get("text_excerpt", "").lower()
+        heading_lower = section["heading"].lower()
+        
+        # Introduction typically connects to Methods/Approach
+        if "introduction" in heading_lower:
+            for other_section in sections:
+                other_heading = other_section["heading"].lower()
+                if any(keyword in other_heading for keyword in ["method", "approach", "algorithm", "proposed"]):
+                    connections.append({
+                        "from": section["heading"],
+                        "to": other_section["heading"],
+                        "type": "semantic",
+                        "strength": "medium"
+                    })
+        
+        # Methods/Approach connects to Results/Experiments
+        if any(keyword in heading_lower for keyword in ["method", "approach", "algorithm", "proposed"]):
+            for other_section in sections:
+                other_heading = other_section["heading"].lower()
+                if any(keyword in other_heading for keyword in ["result", "experiment", "evaluation", "performance"]):
+                    connections.append({
+                        "from": section["heading"],
+                        "to": other_section["heading"],
+                        "type": "semantic",
+                        "strength": "medium"
+                    })
+        
+        # Results connects to Discussion/Conclusion
+        if any(keyword in heading_lower for keyword in ["result", "experiment", "evaluation"]):
+            for other_section in sections:
+                other_heading = other_section["heading"].lower()
+                if any(keyword in other_heading for keyword in ["discussion", "conclusion", "future"]):
+                    connections.append({
+                        "from": section["heading"],
+                        "to": other_section["heading"],
+                        "type": "semantic",
+                        "strength": "medium"
+                    })
+        
+        # Related work connects to Introduction and Methods
+        if any(keyword in heading_lower for keyword in ["related", "previous", "literature"]):
+            for other_section in sections:
+                other_heading = other_section["heading"].lower()
+                if "introduction" in other_heading or any(kw in other_heading for kw in ["method", "approach"]):
+                    connections.append({
+                        "from": section["heading"],
+                        "to": other_section["heading"],
+                        "type": "semantic",
+                        "strength": "weak"
+                    })
+    
+    # Remove duplicate connections
+    seen = set()
+    unique_connections = []
+    for conn in connections:
+        conn_key = (conn["from"], conn["to"], conn["type"])
+        if conn_key not in seen:
+            seen.add(conn_key)
+            unique_connections.append(conn)
     
     return {
         "status": "success",
         "sections": sections,
-        "connections": connections,
-        "connection_count": len(connections)
+        "connections": unique_connections,
+        "connection_count": len(unique_connections)
     }
