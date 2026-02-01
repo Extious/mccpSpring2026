@@ -6,6 +6,7 @@
 API_KEY*
 *API*key*
 *Key*.md
+bltkey.md
 openRouterAPIkey.md
 openRouterKey.md
 poeAPIkey.md
@@ -21,6 +22,11 @@ pre1/paper2slides_beamer/trial/implement/Paper2Slides/
 # Ignore LLM folder with API keys
 LLM/
 LLM dummy/
+
+# Ignore Python bytecode
+__pycache__/
+*.pyc
+*.pyo
 
 # Ignore OS files
 .DS_Store
