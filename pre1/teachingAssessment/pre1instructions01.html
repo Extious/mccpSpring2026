@@ -181,15 +181,31 @@ tr:nth-child(even) td { background: #f9f9f9; }
 </div>
 
 <!-- ======================================= -->
-<h2>Step 5: Edit in Browser (Optional)</h2>
+<h2>Step 5: Edit Slides Directly in Browser</h2>
 
-<p>Your HTML slides have a built-in editing mode:</p>
-<ul>
-  <li>Press <strong>T</strong> to show the toolbar</li>
-  <li>Press <strong>E</strong> to enter edit mode (all text becomes editable)</li>
-  <li>Use toolbar buttons to <strong>Save to Cache</strong>, <strong>Load from Cache</strong>, or <strong>Download</strong> an edited version</li>
-  <li>Press <strong>Escape</strong> to exit edit mode</li>
-</ul>
+<div class="box">
+  <strong>New feature:</strong> Your HTML slides are <strong>editable directly in the browser</strong> — a feature developed specifically for this course. You do not need any code editor to make last-minute changes to your slides.
+</div>
+
+<p>How to use the built-in editing mode:</p>
+<ol>
+  <li>Open your HTML slides in any browser (Chrome, Firefox, Safari, Edge)</li>
+  <li>Press <strong>T</strong> to reveal the toolbar at the top of the screen</li>
+  <li>Press <strong>E</strong> to enter edit mode — all text on the current slide becomes editable. Click any text to modify it directly.</li>
+  <li>Use the toolbar buttons:
+    <ul>
+      <li><strong>Save to Cache</strong> — saves your current edits to the browser's local storage (persists between sessions)</li>
+      <li><strong>Load from Cache</strong> — restores a previously saved version</li>
+      <li><strong>Download HTML</strong> — exports the edited slides as a new <code>.html</code> file you can save and share</li>
+      <li><strong>Clear Cache</strong> — removes all saved data</li>
+    </ul>
+  </li>
+  <li>Press <strong>Escape</strong> to exit edit mode and return to presentation navigation</li>
+</ol>
+
+<div class="box tip">
+  <strong>Tip:</strong> This means you can fine-tune wording, fix typos, and adjust content without going back to the AI agent. The downloaded file is a complete, self-contained HTML presentation — just like the original.
+</div>
 
 <!-- ======================================= -->
 <h2>Step 6: Publish and Practice</h2>
@@ -260,6 +276,11 @@ tr:nth-child(even) td { background: #f9f9f9; }
     <td>Ask AI to commit, push, publish</td>
     <td>GitHub Pages URL</td>
   </tr>
+  <tr>
+    <td><strong>After session</strong></td>
+    <td>Record full 8-min presentation<br>Save video in <code>recordings/</code></td>
+    <td>AI analysis (instructions coming soon)</td>
+  </tr>
 </table>
 
 <!-- ======================================= -->
@@ -313,10 +334,100 @@ tr:nth-child(even) td { background: #f9f9f9; }
   <tr><td><strong>0:15–0:45</strong></td><td>Peer review</td><td>In pairs/groups: share outlines and slides. Give feedback on accessibility, structure, and visual design.</td></tr>
   <tr><td><strong>0:45–1:00</strong></td><td>Delivery tips</td><td>Walkthrough of <a href="https://tesolchina.github.io/mccpSpring2026/pre1/teachingAssessment/deliveryTips.html" target="_blank">Delivery Tips guide</a>: body language, eye contact (5-second technique), voice, pausing, audience interaction.</td></tr>
   <tr><td><strong>1:00–1:10</strong></td><td>Break</td><td>Review notes, mentally rehearse your opening.</td></tr>
-  <tr><td><strong>1:10–2:30</strong></td><td>3-min practice</td><td>Each student delivers <strong>first 3 minutes</strong>. Focus on <strong>delivery only</strong>: body language, eye contact, voice. 1-2 min peer + instructor feedback after each.</td></tr>
-  <tr><td><strong>2:30–2:45</strong></td><td>Reflection</td><td>Write down 3 specific improvements. Update slides or outline. Commit to repo.</td></tr>
+  <tr><td><strong>1:10–2:30</strong></td><td>3-min practice + peer feedback</td><td>Each student delivers the <strong>first 3 minutes</strong> of their presentation. Focus on <strong>delivery only</strong> (not content). After each speaker, peers provide <strong>1-2 minutes of structured feedback</strong> (see Peer Feedback Guide below). Instructor adds brief targeted comments.</td></tr>
+  <tr><td><strong>2:30–2:45</strong></td><td>Reflection</td><td>Write down 3 specific improvements based on feedback. Update slides or outline. Commit to repo.</td></tr>
   <tr><td><strong>2:45–3:00</strong></td><td>Wrap-up</td><td>Assessment date reminder, upload deadline (2 hours before), peer review duties.</td></tr>
 </table>
+
+<!-- ======================================= -->
+<h2>Peer Feedback Guide — What to Watch For</h2>
+
+<p>During the 3-minute practice, your role as a peer reviewer is to give <strong>specific, actionable feedback on delivery</strong> (not content). Use this framework:</p>
+
+<table>
+  <tr><th>Area</th><th>What to observe</th><th>Feedback starters</th></tr>
+  <tr>
+    <td><strong>Eye contact</strong></td>
+    <td>Does the speaker look at the audience or stare at slides/notes? Do they cover all parts of the room?</td>
+    <td>"I noticed you looked at the screen during... Try picking 3 anchor points in the room."</td>
+  </tr>
+  <tr>
+    <td><strong>Body language</strong></td>
+    <td>Stable stance? Open posture? Purposeful gestures or fidgeting?</td>
+    <td>"Your gestures were effective when... You could try keeping your hands still between points."</td>
+  </tr>
+  <tr>
+    <td><strong>Voice</strong></td>
+    <td>Audible? Varied tone? Rushing or too slow? Filler words (um, uh, so)?</td>
+    <td>"Your pace was good during the opening. Try pausing after key findings for emphasis."</td>
+  </tr>
+  <tr>
+    <td><strong>Interaction</strong></td>
+    <td>Does it feel like the speaker is talking TO you or AT you? Any questions or engagement cues?</td>
+    <td>"The rhetorical question at the start was great. You could add one more before the results section."</td>
+  </tr>
+  <tr>
+    <td><strong>Overall presence</strong></td>
+    <td>Does the speaker appear confident and natural? Any script-reading?</td>
+    <td>"You seemed most natural when... For the technical section, try using simpler language."</td>
+  </tr>
+</table>
+
+<div class="box tip">
+  <strong>Tip:</strong> Good feedback is <strong>specific</strong> ("When you explained the methodology, you spoke faster") rather than vague ("Good job"). Mention one strength and one area to improve.
+</div>
+
+<!-- ======================================= -->
+<h2>After the Session: Record a Full 8-Minute Presentation</h2>
+
+<p>After the preparation session, go home and <strong>record a full 8-minute practice presentation</strong>. This recording will be used for self-review and AI-assisted analysis.</p>
+
+<h3>Recording Instructions</h3>
+<ol>
+  <li><strong>Set up a screen recording</strong> that captures both your slides and your face/voice:
+    <ul>
+      <li><strong>Mac:</strong> Use QuickTime (File &gt; New Screen Recording) or Zoom (record a meeting with yourself, share screen)</li>
+      <li><strong>Windows:</strong> Use OBS Studio (free), Xbox Game Bar (Win+G), or Zoom</li>
+      <li><strong>Simplest method:</strong> Start a Zoom meeting alone, share your slides screen, turn on your camera, and hit Record</li>
+    </ul>
+  </li>
+  <li><strong>Open your HTML slides</strong> in full screen (press F11 or Cmd+Shift+F)</li>
+  <li><strong>Deliver the full 8-minute presentation</strong> as if presenting to a live audience:
+    <ul>
+      <li>Stand up if possible — it improves delivery</li>
+      <li>Look at the camera (your "audience"), not just the screen</li>
+      <li>Use the arrow keys to advance slides while speaking</li>
+    </ul>
+  </li>
+  <li><strong>Save the recording</strong> as an MP4 or MOV file</li>
+</ol>
+
+<h3>Save the Recording to Your Repository</h3>
+<ol>
+  <li>Create a folder in your working directory: <code>pre1work/recordings/</code></li>
+  <li>Save your video file there (e.g., <code>pre1work/recordings/practice_recording.mp4</code>)</li>
+  <li>Commit and push to your forked repository</li>
+</ol>
+
+<div class="box warn">
+  <strong>File size note:</strong> Video files can be large. If your recording exceeds GitHub's 100MB file limit, you can either:
+  (a) compress it using HandBrake (free) or an online video compressor,
+  (b) upload it to a cloud service (Google Drive, OneDrive) and put the sharing link in a <code>recording_link.md</code> file instead, or
+  (c) use Git LFS (ask your AI agent to help set this up).
+</div>
+
+<h3>What Happens Next</h3>
+<p><strong>More instructions will be provided</strong> on how to analyze your recorded presentation using AI tools. The AI can help you identify:</p>
+<ul>
+  <li>Filler word frequency and locations</li>
+  <li>Pacing patterns (where you rush or slow down)</li>
+  <li>Time spent on each section vs. target timing</li>
+  <li>Suggestions for improving delivery based on the assessment rubric</li>
+</ul>
+
+<div class="box">
+  <strong>Coming soon:</strong> Detailed instructions for AI-assisted video analysis will be shared in a follow-up post. For now, focus on making the best recording you can.
+</div>
 
 <!-- ======================================= -->
 <h2>Useful Links</h2>
