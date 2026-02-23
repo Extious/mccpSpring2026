@@ -1,5 +1,11 @@
 # Feedback on AI-Generated Outline
 
+
+
+the outline is good 
+but I only need about 9 slides 
+I want to ensure the presentation is accessible for people with no prior training on this topic
+
 ## Instructions
 
 After the AI agent generates your presentation outline (via `genOutline.md`), review it carefully and provide your feedback below. Be as specific as possible — the AI will use your feedback to revise the outline and generate your HTML slides.
