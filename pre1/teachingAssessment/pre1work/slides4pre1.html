@@ -79,6 +79,41 @@
       border-radius: 6px;
     }
 
+    #slide2 p {
+      font-size: clamp(1.03rem, 1.35vw, 1.18rem);
+      line-height: 1.45;
+    }
+
+    #slide2 .note {
+      padding: 0.65rem 0.85rem;
+    }
+
+    #slide4 li {
+      font-size: clamp(1.02rem, 1.3vw, 1.14rem);
+      line-height: 1.4;
+    }
+
+    #slide4 .slide-image {
+      max-height: 22vh;
+    }
+
+    .slide-image-wrap {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      margin: 0.2rem 0;
+    }
+
+    .slide-image {
+      width: min(100%, 760px);
+      max-height: 34vh;
+      object-fit: contain;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: #f3f5f4;
+      padding: 0.25rem;
+    }
+
     .badge {
       display: inline-block;
       font-size: 0.78rem;
@@ -227,7 +262,7 @@
 
   <div class="slide active" id="slide1">
     <h1 contenteditable="false">SGLang</h1>
-    <p class="subtitle" contenteditable="false">Efficient Execution of Structured Language Model Programs</p>
+    <p class="subtitle" contenteditable="false">Runtime Inference Backend Focus</p>
     <p contenteditable="false">Zheng et al. | arXiv:2312.07104v2</p>
     <p contenteditable="false">Presentation 1 | 8 minutes</p>
     <div class="slide-number">1</div>
@@ -235,86 +270,102 @@
 
   <div class="slide" id="slide2">
     <span class="badge" contenteditable="false">Opening</span>
-    <h2 contenteditable="false">Why This Problem Matters</h2>
-    <p contenteditable="false">Many LLM workflows use multiple model calls in sequence and in branches.</p>
-    <p contenteditable="false">In practice, systems often recompute shared prompt prefixes and waste memory bandwidth.</p>
-    <div class="note" contenteditable="false">
-      Think of a team that keeps rereading the same project brief before every new task.
+    <h2 contenteditable="false">Runtime Inference Bottlenecks</h2>
+    <p contenteditable="false">Backend serving often recomputes shared prefixes across related requests.</p>
+    <p contenteditable="false">That creates avoidable GPU work, KV pressure, and slower first-token latency.</p>
+    <div class="slide-image-wrap">
+      <img
+        src="kv_cache_patterns.png"
+        alt="KV cache sharing patterns across workflows"
+        class="slide-image"
+        contenteditable="false"
+      />
     </div>
-    <div class="transition-cue" contenteditable="false">Next: what research gap this paper addresses</div>
+    <div class="note" contenteditable="false">
+      Think of a server rereading the same context before each response.
+    </div>
+    <div class="transition-cue" contenteditable="false">Next: the backend gap this paper targets</div>
     <div class="slide-number">2</div>
   </div>
 
   <div class="slide" id="slide3">
-    <span class="badge" contenteditable="false">Introduction</span>
-    <h2 contenteditable="false">Research Gap and Objective</h2>
+    <span class="badge" contenteditable="false">Backend Gap</span>
+    <h2 contenteditable="false">Inference Backend Gap and Objective</h2>
     <ul contenteditable="false">
-      <li>Current inference engines are general but not workflow-aware.</li>
-      <li>They underuse KV cache reuse opportunities across structured calls.</li>
-      <li>Constrained decoding for structured output is often token-by-token and slow.</li>
+      <li>General-purpose engines are strong, but not cache-aware for structured workflows.</li>
+      <li>KV reuse opportunities are frequently missed in multi-call and branching execution.</li>
+      <li>Constrained decoding is often token-by-token even when multi-token jumps are possible.</li>
     </ul>
     <h3 contenteditable="false">Objective</h3>
-    <p contenteditable="false">Build a co-designed frontend and runtime system that executes structured LM programs efficiently.</p>
-    <div class="transition-cue" contenteditable="false">Next: core SGLang design</div>
+    <p contenteditable="false">Improve backend runtime latency and throughput without changing model weights.</p>
+    <div class="transition-cue" contenteditable="false">Next: RadixAttention and runtime mechanics</div>
     <div class="slide-number">3</div>
   </div>
 
   <div class="slide" id="slide4">
-    <span class="badge" contenteditable="false">Method</span>
-    <h2 contenteditable="false">SGLang System Design</h2>
+    <span class="badge" contenteditable="false">Runtime Core</span>
+    <h2 contenteditable="false">RadixAttention for KV Reuse</h2>
     <ul contenteditable="false">
-      <li>Frontend language primitives: generation, selection, and parallel control.</li>
-      <li>Runtime optimization 1: RadixAttention for automatic KV cache reuse.</li>
-      <li>Runtime optimization 2: compressed finite state machine for faster constrained decoding.</li>
-      <li>Runtime optimization 3: API speculative execution for endpoint-based models.</li>
+      <li>Store reusable KV states in a radix tree with LRU-style eviction.</li>
+      <li>Match shared prefixes automatically across requests and workflow branches.</li>
+      <li>Use cache-aware scheduling to increase reuse and reduce recomputation.</li>
+      <li>Frontend only provides hints; runtime inference backend performs the optimization.</li>
     </ul>
-    <div class="note" contenteditable="false">Key idea: exploit workload structure instead of treating requests as unrelated calls.</div>
-    <div class="transition-cue" contenteditable="false">Next: key empirical findings</div>
+    <div class="slide-image-wrap">
+      <img
+        src="radix_tree_steps.png"
+        alt="Radix tree cache operations across steps"
+        class="slide-image"
+        contenteditable="false"
+      />
+    </div>
+    <div class="note" contenteditable="false">Key idea: treat inference as a structured cache-and-schedule problem.</div>
+    <div class="transition-cue" contenteditable="false">Next: constrained decoding and measured speedups</div>
     <div class="slide-number">4</div>
   </div>
 
   <div class="slide" id="slide5">
-    <span class="badge" contenteditable="false">Findings</span>
-    <h2 contenteditable="false">Key Findings and Evidence</h2>
+    <span class="badge" contenteditable="false">Runtime Results</span>
+    <h2 contenteditable="false">Constrained Decoding and Speedups</h2>
     <ul contenteditable="false">
-      <li>Up to 6.4x throughput improvement across diverse workloads.</li>
-      <li>Lower latency in many scenarios with substantial cache reuse gains.</li>
-      <li>Benefits shown in agent control, JSON decoding, RAG pipelines, and multi-turn chat.</li>
+      <li>Compressed finite state machine enables multi-token constrained decoding jumps.</li>
+      <li>Reported gains reach up to 6.4x throughput and up to 3.7x lower latency.</li>
+      <li>Improvements appear across agent control, JSON decoding, RAG, and chat workloads.</li>
     </ul>
-    <div class="note" contenteditable="false">The paper also reports compatibility with multiple models and hardware settings.</div>
-    <div class="transition-cue" contenteditable="false">Next: why this matters beyond one benchmark</div>
+    <div class="note" contenteditable="false">Ablations show cache reuse and decode optimization both contribute to backend gains.</div>
+    <div class="transition-cue" contenteditable="false">Next: why backend inference optimization matters in production</div>
     <div class="slide-number">5</div>
   </div>
 
   <div class="slide" id="slide6">
-    <span class="badge" contenteditable="false">Significance</span>
-    <h2 contenteditable="false">Why This Research Is Important</h2>
+    <span class="badge" contenteditable="false">Serving Impact</span>
+    <h2 contenteditable="false">Why Backend Runtime Focus Matters</h2>
     <ul contenteditable="false">
-      <li>Multi-agent and structured prompting systems are growing fast.</li>
-      <li>Runtime efficiency directly impacts cost, latency, and scalability.</li>
-      <li>The work bridges frontend program structure and backend execution strategy.</li>
+      <li>High-concurrency LLM serving depends on cache efficiency and scheduler policy.</li>
+      <li>Backend inference optimization reduces cost per request and improves SLO stability.</li>
+      <li>System-level gains are possible without retraining or changing model architecture.</li>
     </ul>
-    <p contenteditable="false">It shows that system-level design can unlock large practical gains without changing model weights.</p>
-    <div class="transition-cue" contenteditable="false">Next: impact on my own research and writing</div>
+    <p contenteditable="false">This paper makes backend runtime a first-class research target, not only an implementation detail.</p>
+    <div class="transition-cue" contenteditable="false">Next: how this changes my research approach</div>
     <div class="slide-number">6</div>
   </div>
 
   <div class="slide" id="slide7">
     <span class="badge" contenteditable="false">Reflection</span>
-    <h2 contenteditable="false">Impact on My Research and Writing</h2>
-    <h3 contenteditable="false">Research Design Lessons</h3>
+    <h2 contenteditable="false">Impact on My Backend Research</h2>
+    <h3 contenteditable="false">Research Lessons</h3>
     <ul contenteditable="false">
-      <li>Model selection is not enough; workload structure matters.</li>
-      <li>Scheduling and cache policy should reflect workflow semantics.</li>
-      <li>Evaluation should include multiple realistic workloads.</li>
+      <li>Model quality alone is not enough; runtime inference design matters.</li>
+      <li>I should profile KV reuse and scheduling behavior before optimizing prompts.</li>
+      <li>Evaluation should report latency, throughput, and cache-hit behavior together.</li>
     </ul>
     <h3 contenteditable="false">Writing Lessons</h3>
     <ul contenteditable="false">
-      <li>Clear problem framing and concrete examples in the introduction.</li>
-      <li>Strong visual explanation of mechanisms and ablation evidence.</li>
-      <li>Quantitative claims supported by broad experimental coverage.</li>
+      <li>Strong bottleneck framing makes systems papers easier for non-specialists.</li>
+      <li>Figures and ablations explain backend mechanisms better than long text.</li>
+      <li>Quantitative claims are convincing when tied to diverse runtime workloads.</li>
     </ul>
-    <div class="transition-cue" contenteditable="false">Next: one sentence takeaway</div>
+    <div class="transition-cue" contenteditable="false">Next: final backend-focused takeaway</div>
     <div class="slide-number">7</div>
   </div>
 
@@ -322,9 +373,9 @@
     <span class="badge" contenteditable="false">Summary</span>
     <h2 contenteditable="false">Key Takeaway</h2>
     <div class="note" contenteditable="false">
-      SGLang demonstrates that workflow-aware execution, especially KV cache reuse and structured decoding optimization, can deliver substantial real-world performance gains.
+      SGLang shows that runtime inference backend optimizations, especially KV reuse and fast constrained decoding, can deliver major serving gains.
     </div>
-    <p contenteditable="false">For complex LM programs, system design is a first-class research contribution.</p>
+    <p contenteditable="false">For complex LM programs, backend runtime design is a first-class research contribution.</p>
     <div class="transition-cue" contenteditable="false">Thank you and questions</div>
     <div class="slide-number">8</div>
   </div>
