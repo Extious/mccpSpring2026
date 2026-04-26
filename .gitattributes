@@ -1,1 +1,2 @@
+*.mov filter=lfs diff=lfs merge=lfs -text
 pre1/teachingAssessment/pre1work/presentation.mov filter=lfs diff=lfs merge=lfs -text
