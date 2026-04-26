@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SGLang Presentation</title>
+  <title>SGLang Presentation - Storytelling in Research</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
@@ -12,12 +12,11 @@
       --color-text: #1a1a2e;
       --color-bg: #FFFFFF;
       --color-bg-alt: #F8FAF4;
-      --color-accent-light: #E8F0ED;
       --color-border: #d8dedb;
+      --timer-warn: #c0392b;
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
-
     body {
       font-family: 'Inter', sans-serif;
       color: var(--color-text);
@@ -27,123 +26,319 @@
 
     .slide {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
+      inset: 0;
+      width: 100%;
       height: 100vh;
-      padding: 5vh 10vw;
+      max-height: 100vh;
+      padding: 2.2vh clamp(1rem, 6vw, 3.5rem) 3rem;
+      overflow: hidden;
       display: none;
+    }
+    .slide.active.slide--layout {
+      display: grid;
+      grid-template-rows: minmax(0, 1fr) auto;
+      grid-template-columns: 100%;
+      gap: 0.3rem;
+    }
+    .slide.slide--compact.active.slide--layout {
+      grid-template-rows: auto auto;
+      align-content: start;
+      row-gap: 0.45rem;
+    }
+    #slide7.slide--compact.active.slide--layout {
+      grid-template-rows: minmax(0, 1fr) auto;
+      align-content: stretch;
+      row-gap: 0.35rem;
+    }
+    .slide.slide--compact .slide-body {
+      padding-top: 0.5vh;
+    }
+    #slide7.slide--compact .slide-body.slide-body--merged {
+      padding-top: 0;
+    }
+    .slide.slide--compact h2 {
+      font-size: clamp(1.85rem, 3.2vw, 2.65rem);
+    }
+    .slide.slide--compact p,
+    .slide.slide--compact li {
+      font-size: clamp(1.12rem, 1.65vw, 1.42rem);
+    }
+    #slide7 .slide-body.slide-body--merged {
+      display: grid;
+      grid-template-rows: 1fr 1fr 1fr;
+      gap: clamp(0.3rem, 0.7vh, 0.45rem);
+      min-height: 0;
+      height: 100%;
+      align-self: stretch;
+      padding: clamp(0.35rem, 0.9vh, 0.55rem);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #eef3f1 0%, #f7faf9 55%, #f0f4f2 100%);
+      box-sizing: border-box;
+    }
+    #slide7 .merge-band {
+      padding: clamp(0.45rem, 1.1vh, 0.75rem) clamp(0.65rem, 1.5vw, 1rem);
+      display: flex;
       flex-direction: column;
       justify-content: center;
-      gap: 0.8rem;
-    }
-
-    .slide.active { display: flex; }
-
-    h1 {
-      font-size: clamp(2.8rem, 5vw, 4rem);
-      color: var(--color-primary);
-      line-height: 1.2;
-      margin-bottom: 0.3em;
-    }
-
-    h2 {
-      font-size: clamp(2.4rem, 4.2vw, 3.6rem);
-      color: var(--color-primary);
-      line-height: 1.2;
-      margin-bottom: 0.4em;
-    }
-
-    h3 {
-      font-size: clamp(1.25rem, 1.8vw, 1.55rem);
-      color: var(--color-primary);
-      margin-top: 0.4em;
-    }
-
-    p, li {
-      font-size: clamp(1.25rem, 1.8vw, 1.55rem);
-      line-height: 1.55;
-    }
-
-    ul { margin-left: 1.2rem; }
-
-    .subtitle {
-      font-size: clamp(1.4rem, 2.2vw, 2rem);
-      color: #355f59;
-    }
-
-    .note {
-      background: var(--color-bg-alt);
+      gap: 0.18rem;
+      min-height: 0;
+      overflow: auto;
+      background: #fff;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
       border-left: 4px solid var(--color-primary);
-      padding: 1rem 1.1rem;
-      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(27, 73, 66, 0.06);
     }
-
-    #slide2 p {
-      font-size: clamp(1.03rem, 1.35vw, 1.18rem);
+    #slide7 .merge-band h2 {
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+      color: var(--color-primary);
+      margin-bottom: 0.12em;
+      line-height: 1.18;
+    }
+    #slide7 .merge-band p,
+    #slide7 .merge-band li {
+      font-size: clamp(0.98rem, 1.4vw, 1.18rem);
       line-height: 1.45;
     }
-
-    #slide2 .note {
-      padding: 0.65rem 0.85rem;
+    #slide7 .merge-band .note {
+      background: var(--color-bg-alt);
+      border-left: 4px solid var(--color-primary);
+      padding: 0.5rem 0.65rem;
+      border-radius: 6px;
+      font-size: clamp(0.95rem, 1.3vw, 1.08rem);
+      margin-top: 0.2rem;
     }
-
-    #slide4 li {
-      font-size: clamp(1.02rem, 1.3vw, 1.14rem);
-      line-height: 1.4;
-    }
-
-    #slide4 .slide-image {
-      max-height: 22vh;
-    }
-
-    .slide-image-wrap {
-      width: 100%;
+    #slide7 .merge-band ul { margin-left: 1.15rem; }
+    .slide.active.slide--title {
       display: flex;
+      flex-direction: column;
       justify-content: center;
-      margin: 0.2rem 0;
+      align-items: center;
+      text-align: center;
+      gap: 0.5rem;
     }
 
-    .slide-image {
-      width: min(100%, 760px);
+    .slide-body {
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+    .slide-body--split {
+      flex-direction: row;
+      align-items: stretch;
+      gap: clamp(0.75rem, 2vw, 1.25rem);
+    }
+    /* Top text + full-width figure: fixes ultra-wide paper figures (e.g. Fig. 1) */
+    .slide-body--banner {
+      flex-direction: column;
+      gap: 0.45rem;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+    .slide-banner-text {
+      flex: 0 1 auto;
+      min-height: 0;
       max-height: 34vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.18rem;
+    }
+    .slide-banner-text h2 {
+      font-size: clamp(1.4rem, 2.4vw, 2rem);
+    }
+    .slide-banner-text p,
+    .slide-banner-text li {
+      font-size: clamp(0.95rem, 1.3vw, 1.12rem);
+      line-height: 1.38;
+    }
+    .slide-banner-text .note { padding: 0.4rem 0.55rem; }
+    .slide-banner-media {
+      flex: 1 1 auto;
+      min-height: 0;
+      max-width: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      background: linear-gradient(180deg, #eef3f1 0%, #f7faf9 55%, #f0f4f2 100%);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: clamp(0.35rem, 0.9vh, 0.65rem) clamp(0.25rem, 0.6vw, 0.5rem);
+    }
+    .slide-ultrawide-stage {
+      flex: 1 1 auto;
+      min-height: 22vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75vh 0 1.25vh;
+      box-sizing: border-box;
+      width: 100%;
+      max-width: 100%;
+      overflow: hidden;
+    }
+    .slide-fig--ultrawide {
+      display: block;
+      width: 100%;
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+      object-position: center;
+      border: none;
+      background: transparent;
+    }
+    @media (max-height: 720px) {
+      .slide-banner-text { max-height: 30vh; }
+      .slide-ultrawide-stage { min-height: 18vh; }
+      .slide-banner-duo .slide-fig--chart { max-height: min(20vh, 220px); }
+      .slide-banner-media > img.slide-fig--chart { max-height: min(36vh, 400px); }
+      #slide4 .slide-banner-text { max-height: 26vh; }
+      #slide4 .slide-fig--tallbanner { max-height: min(54vh, 520px); }
+    }
+    .slide-banner-duo {
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: center;
+      gap: clamp(0.35rem, 0.85vh, 0.55rem);
+      width: 100%;
+      max-width: 100%;
+      min-height: 0;
+      flex: 1 1 auto;
+    }
+    .slide-banner-duo .slide-fig--chart {
+      width: 100%;
+      max-width: 100%;
+      max-height: min(24vh, 280px);
+      min-height: 0;
+      flex: 0 1 auto;
+      object-fit: contain;
+    }
+    .slide-fig--chart {
+      width: 100%;
+      max-width: 100%;
+      height: auto;
       object-fit: contain;
       border: 1px solid var(--color-border);
       border-radius: 8px;
-      background: #f3f5f4;
-      padding: 0.25rem;
+      background: #fff;
+    }
+    .slide-banner-media > img.slide-fig--chart {
+      max-height: min(44vh, 480px);
+      min-height: 0;
+    }
+    .slide-fig--tallbanner {
+      width: 100%;
+      max-height: min(58vh, 560px);
+      object-fit: contain;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: #fff;
+    }
+    #slide4 .slide-banner-text {
+      max-height: 28vh;
+    }
+    #slide4 .slide-fig--tallbanner {
+      max-height: min(62vh, 600px);
+    }
+    .slide-col-text {
+      flex: 1 1 52%;
+      min-width: 0;
+      min-height: 0;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 0.28rem;
+    }
+    .slide-col-media {
+      flex: 1 1 48%;
+      min-width: 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.35rem;
+    }
+    .slide-col-media--stack {
+      justify-content: flex-start;
+      gap: 0.25rem;
+    }
+    .slide-fig {
+      width: 100%;
+      max-height: 42vh;
+      object-fit: contain;
+      border: 1px solid var(--color-border);
+      border-radius: 8px;
+      background: #f6f8f7;
+    }
+    .slide-fig--half { max-height: 20vh; }
+    .fig-cap {
+      font-size: clamp(0.72rem, 1.05vw, 0.82rem);
+      color: #5a6562;
+      text-align: center;
+      line-height: 1.3;
     }
 
+    h1 {
+      font-size: clamp(2.6rem, 4.8vw, 3.6rem);
+      color: var(--color-primary);
+      line-height: 1.18;
+      margin-bottom: 0.25em;
+    }
+    h2 {
+      font-size: clamp(1.65rem, 2.9vw, 2.45rem);
+      color: var(--color-primary);
+      line-height: 1.15;
+      margin-bottom: 0.18em;
+    }
+    p, li {
+      font-size: clamp(1.05rem, 1.55vw, 1.35rem);
+      line-height: 1.45;
+    }
+    ul { margin-left: 1.1rem; }
+    .subtitle {
+      font-size: clamp(1.25rem, 2vw, 1.75rem);
+      color: #355f59;
+    }
+    .note {
+      background: var(--color-bg-alt);
+      border-left: 4px solid var(--color-primary);
+      padding: 0.5rem 0.7rem;
+      border-radius: 6px;
+    }
     .badge {
       display: inline-block;
-      font-size: 0.78rem;
+      font-size: 0.72rem;
       font-weight: 600;
-      letter-spacing: 0.4px;
-      padding: 0.35rem 0.6rem;
+      letter-spacing: 0.35px;
+      padding: 0.3rem 0.55rem;
       border-radius: 4px;
       background: #edf4f2;
       color: #24544d;
-      margin-bottom: 0.2rem;
+      margin-bottom: 0.15rem;
       text-transform: uppercase;
     }
-
     .transition-cue {
-      margin-top: auto;
-      font-size: clamp(1.05rem, 1.4vw, 1.25rem);
+      padding-top: 0.35rem;
+      font-size: clamp(0.9rem, 1.15vw, 1.02rem);
       font-style: italic;
       color: var(--color-primary);
       border-top: 1px solid var(--color-border);
-      padding-top: 0.8rem;
     }
-
     .slide-number {
       position: absolute;
-      bottom: 1.2rem;
-      right: 2rem;
+      bottom: 1rem;
+      right: 1.5rem;
       color: #b7b7b7;
-      font-size: clamp(0.9rem, 1.2vw, 1.1rem);
+      font-size: clamp(0.85rem, 1.1vw, 1rem);
     }
-
     .progress-bar {
       position: fixed;
       bottom: 0;
@@ -155,372 +350,346 @@
       z-index: 999;
     }
 
-    .toolbar {
+    .deck-timer {
       position: fixed;
-      top: 18px;
-      right: 18px;
-      z-index: 1200;
-      display: none;
-      width: 220px;
-      background: #fff;
-      border: 2px solid var(--color-primary);
-      border-radius: 8px;
-      padding: 0.8rem;
-      box-shadow: 0 10px 24px rgba(0,0,0,0.14);
+      top: 12px;
+      right: 12px;
+      z-index: 1000;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--color-border);
+      border-radius: 10px;
+      padding: 8px 12px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+      font-size: 0.78rem;
+      max-width: min(280px, 42vw);
     }
-
-    .toolbar.visible { display: block; }
-
-    .toolbar h4 {
-      font-size: 1rem;
-      color: var(--color-primary);
-      margin-bottom: 0.5rem;
-    }
-
-    .toolbar button {
-      width: 100%;
-      border: none;
-      background: var(--color-primary);
-      color: white;
-      border-radius: 5px;
-      padding: 0.55rem;
-      margin: 0.28rem 0;
-      font-size: 0.9rem;
-      cursor: pointer;
-    }
-
-    .timer {
-      position: fixed;
-      top: 18px;
-      left: 18px;
-      z-index: 1200;
-      display: none;
-      background: rgba(27, 73, 66, 0.92);
-      color: white;
-      padding: 0.6rem 1rem;
-      border-radius: 8px;
-      font-size: clamp(1.5rem, 2.5vw, 2rem);
-      font-weight: 700;
+    .deck-timer.collapsed .timer-expanded { display: none; }
+    .deck-timer.collapsed .timer-main { font-size: 1rem; }
+    .timer-main {
       font-variant-numeric: tabular-nums;
+      font-weight: 700;
+      font-size: 1.35rem;
+      color: var(--color-primary);
     }
-
-    .timer.visible { display: block; }
-
-    .timer.warning { background: rgba(191, 67, 54, 0.92); }
-
-    .timer-controls {
-      position: fixed;
-      left: 18px;
-      bottom: 56px;
-      z-index: 1200;
+    .deck-timer.warning .timer-main { color: var(--timer-warn); }
+    .deck-timer.over .timer-main { color: var(--timer-warn); animation: pulse 1s ease infinite; }
+    @keyframes pulse { 50% { opacity: 0.65; } }
+    .timer-row {
       display: flex;
-      gap: 0.4rem;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-top: 6px;
     }
-
-    .timer-controls button {
-      border: none;
-      background: var(--color-primary);
-      color: white;
-      border-radius: 4px;
-      padding: 0.45rem 0.75rem;
-      font-size: 0.85rem;
+    .timer-row button {
+      font-family: inherit;
+      font-size: 0.72rem;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1px solid #c5ccc9;
+      background: #f4f7f5;
       cursor: pointer;
+    }
+    .timer-row button:hover { background: #e8f0ed; }
+    .slide-target {
+      font-size: 0.72rem;
+      color: #6a7572;
+      margin-top: 4px;
     }
 
     .help {
       position: fixed;
-      right: 18px;
-      bottom: 34px;
+      left: 12px;
+      bottom: 10px;
       color: #9aa0a6;
-      font-size: 0.82rem;
+      font-size: 0.74rem;
       z-index: 500;
+      max-width: 52vw;
+      line-height: 1.35;
     }
-
-    #slide1, #slide9 { text-align: center; }
   </style>
 </head>
 <body>
   <div class="progress-bar" id="progressBar"></div>
 
-  <div class="timer" id="timer">1:00</div>
-  <div class="timer-controls">
-    <button onclick="startTimer()">Start</button>
-    <button onclick="pauseTimer()">Pause</button>
-    <button onclick="resetTimer()">Reset</button>
+  <div class="deck-timer" id="deckTimer" title="8-minute assessment limit (MCCP6020 Assessment 1)">
+    <div class="timer-main" id="timerDisplay">8:00</div>
+    <div class="timer-expanded">
+      <div class="slide-target" id="slideTarget">Slide 1 suggested block: 0:00-0:30</div>
+      <div class="timer-row">
+        <button type="button" id="btnTimerToggle">Start</button>
+        <button type="button" id="btnTimerReset">Reset</button>
+        <button type="button" id="btnTimerCollapse">Hide details</button>
+      </div>
+      <div style="margin-top:6px;font-size:0.7rem;color:#7d8582;">
+        Countdown for rehearsal / video. At 0:00, add padding or shorten slides.
+      </div>
+    </div>
   </div>
 
-  <div class="toolbar" id="toolbar">
-    <h4>Edit Tools</h4>
-    <button onclick="saveToCache()">Save to Cache</button>
-    <button onclick="loadFromCache()">Load from Cache</button>
-    <button onclick="downloadHTML()">Download HTML</button>
-    <button onclick="clearCache()">Clear Cache</button>
-    <button onclick="toggleEditMode()">Toggle Edit Mode</button>
+  <div class="help">
+    Arrows / Space: next slide. &nbsp;|&nbsp; T: timer details. &nbsp;|&nbsp; F11: fullscreen for recording.
   </div>
 
-  <div class="help">Press T for toolbar | E for edit | Left Right Space to navigate</div>
-
-  <div class="slide active" id="slide1">
-    <h1 contenteditable="false">SGLang</h1>
-    <p class="subtitle" contenteditable="false">Runtime Inference Backend Focus</p>
-    <p contenteditable="false">Zheng et al. | arXiv:2312.07104v2</p>
-    <p contenteditable="false">Presentation 1 | 8 minutes</p>
+  <div class="slide slide--title active" id="slide1" data-target="0:00-0:30">
+    <h1>Storytelling in Systems Research</h1>
+    <p class="subtitle">How SGLang Makes a Complex Paper Convincing</p>
+    <p>Zhan ZHAO</p>
+    <p>Zheng et al. | arXiv:2312.07104v2</p>
+    <p>Presentation 1 | 8 minutes | Visual aids + non-specialist audience</p>
     <div class="slide-number">1</div>
   </div>
 
-  <div class="slide" id="slide2">
-    <span class="badge" contenteditable="false">Opening</span>
-    <h2 contenteditable="false">Runtime Inference Bottlenecks</h2>
-    <p contenteditable="false">Backend serving often recomputes shared prefixes across related requests.</p>
-    <p contenteditable="false">That creates avoidable GPU work, KV pressure, and slower first-token latency.</p>
-    <div class="slide-image-wrap">
-      <img
-        src="kv_cache_patterns.png"
-        alt="KV cache sharing patterns across workflows"
-        class="slide-image"
-        contenteditable="false"
-      />
+  <div class="slide slide--layout" id="slide2" data-target="0:30-1:15">
+    <div class="slide-body slide-body--banner">
+      <div class="slide-banner-text">
+        <span class="badge">Article Overview</span>
+        <h2>What Is SGLang?</h2>
+        <p>A system that speeds up LLM apps by avoiding repeated work on shared context.</p>
+        <ul>
+          <li><strong>Pain:</strong> The same long context is reprocessed many times.</li>
+          <li><strong>Idea:</strong> Reuse cached context via <strong>RadixAttention</strong>.</li>
+        </ul>
+        <div class="note">Analogy: a smart bookmark instead of rereading chapter one every time.</div>
+      </div>
+      <div class="slide-banner-media">
+        <div class="slide-ultrawide-stage">
+          <img class="slide-fig slide-fig--ultrawide" src="https://arxiv.org/html/2312.07104v2/x1.png" alt="Figure 1 system architecture from SGLang paper" />
+        </div>
+        <p class="fig-cap">Fig. 1 (Zheng et al.): frontend language + optimized runtime.</p>
+      </div>
     </div>
-    <div class="note" contenteditable="false">
-      Think of a server rereading the same context before each response.
-    </div>
-    <div class="transition-cue" contenteditable="false">Next: the backend gap this paper targets</div>
+    <div class="transition-cue">Next: findings, significance, and persuasion</div>
     <div class="slide-number">2</div>
   </div>
 
-  <div class="slide" id="slide3">
-    <span class="badge" contenteditable="false">Backend Gap</span>
-    <h2 contenteditable="false">Inference Backend Gap and Objective</h2>
-    <ul contenteditable="false">
-      <li>General-purpose engines are strong, but not cache-aware for structured workflows.</li>
-      <li>KV reuse opportunities are frequently missed in multi-call and branching execution.</li>
-      <li>Constrained decoding is often token-by-token even when multi-token jumps are possible.</li>
-    </ul>
-    <h3 contenteditable="false">Objective</h3>
-    <p contenteditable="false">Improve backend runtime latency and throughput without changing model weights.</p>
-    <div class="transition-cue" contenteditable="false">Next: RadixAttention and runtime mechanics</div>
+  <div class="slide slide--layout" id="slide3" data-target="1:15-2:00">
+    <div class="slide-body slide-body--banner">
+      <div class="slide-banner-text">
+        <span class="badge">Findings</span>
+        <h2>Key Findings and Significance</h2>
+        <ul>
+          <li>Up to <strong>6.4x</strong> higher throughput.</li>
+          <li>Up to <strong>3.7x</strong> lower latency.</li>
+        </ul>
+        <p><strong>Significance:</strong> lower serving cost; faster responses at scale.</p>
+        <div class="note">Question for the talk: how do the authors make this claim persuasive?</div>
+      </div>
+      <div class="slide-banner-media">
+        <div class="slide-banner-duo">
+          <img class="slide-fig slide-fig--chart" src="https://arxiv.org/html/2312.07104v2/x5.png" alt="Figure 5 throughput" />
+          <img class="slide-fig slide-fig--chart" src="https://arxiv.org/html/2312.07104v2/x6.png" alt="Figure 6 latency" />
+        </div>
+        <p class="fig-cap">Figs. 5-6: normalized throughput (higher) and latency (lower), Llama-7B.</p>
+      </div>
+    </div>
+    <div class="transition-cue">Next: writing strategy 1 - problem-first framing</div>
     <div class="slide-number">3</div>
   </div>
 
-  <div class="slide" id="slide4">
-    <span class="badge" contenteditable="false">Runtime Core</span>
-    <h2 contenteditable="false">RadixAttention for KV Reuse</h2>
-    <ul contenteditable="false">
-      <li>Store reusable KV states in a radix tree with LRU-style eviction.</li>
-      <li>Match shared prefixes automatically across requests and workflow branches.</li>
-      <li>Use cache-aware scheduling to increase reuse and reduce recomputation.</li>
-      <li>Frontend only provides hints; runtime inference backend performs the optimization.</li>
-    </ul>
-    <div class="slide-image-wrap">
-      <img
-        src="radix_tree_steps.png"
-        alt="Radix tree cache operations across steps"
-        class="slide-image"
-        contenteditable="false"
-      />
+  <div class="slide slide--layout" id="slide4" data-target="2:00-3:00">
+    <div class="slide-body slide-body--banner">
+      <div class="slide-banner-text">
+        <span class="badge">Writing Strategy 1</span>
+        <h2>Problem-First Framing</h2>
+        <p>Readers feel the bottleneck before heavy technical detail.</p>
+        <ul>
+          <li><strong>Evidence:</strong> shared-prefix waste is visualized early.</li>
+          <li><strong>Effect:</strong> motivation is concrete and relatable.</li>
+        </ul>
+      </div>
+      <div class="slide-banner-media">
+        <img class="slide-fig slide-fig--tallbanner" src="https://arxiv.org/html/2312.07104v2/x3.png" alt="Figure 3 RadixAttention tree" />
+        <p class="fig-cap">Fig. 3: radix tree over prompts - shows why reuse matters.</p>
+      </div>
     </div>
-    <div class="note" contenteditable="false">Key idea: treat inference as a structured cache-and-schedule problem.</div>
-    <div class="transition-cue" contenteditable="false">Next: constrained decoding and measured speedups</div>
+    <div class="transition-cue">Next: writing strategy 2 - layered structure</div>
     <div class="slide-number">4</div>
   </div>
 
-  <div class="slide" id="slide5">
-    <span class="badge" contenteditable="false">Runtime Results</span>
-    <h2 contenteditable="false">Constrained Decoding and Speedups</h2>
-    <ul contenteditable="false">
-      <li>Compressed finite state machine enables multi-token constrained decoding jumps.</li>
-      <li>Reported gains reach up to 6.4x throughput and up to 3.7x lower latency.</li>
-      <li>Improvements appear across agent control, JSON decoding, RAG, and chat workloads.</li>
-    </ul>
-    <div class="note" contenteditable="false">Ablations show cache reuse and decode optimization both contribute to backend gains.</div>
-    <div class="transition-cue" contenteditable="false">Next: why backend inference optimization matters in production</div>
+  <div class="slide slide--layout" id="slide5" data-target="3:00-4:00">
+    <div class="slide-body slide-body--banner">
+      <div class="slide-banner-text">
+        <span class="badge">Writing Strategy 2</span>
+        <h2>Layered Structure</h2>
+        <p>Frontend language vs backend runtime - clear signposts.</p>
+        <ul>
+          <li><strong>Evidence:</strong> architecture is stated explicitly (Fig. 1).</li>
+          <li><strong>Effect:</strong> readers digest user-facing ideas before deep runtime detail.</li>
+        </ul>
+      </div>
+      <div class="slide-banner-media">
+        <div class="slide-ultrawide-stage">
+          <img class="slide-fig slide-fig--ultrawide" src="https://arxiv.org/html/2312.07104v2/x1.png" alt="Figure 1 architecture repeated for structure argument" />
+        </div>
+        <p class="fig-cap">Same Fig. 1: supports signposting (two-layer story).</p>
+      </div>
+    </div>
+    <div class="transition-cue">Next: writing strategy 3 - ablation evidence</div>
     <div class="slide-number">5</div>
   </div>
 
-  <div class="slide" id="slide6">
-    <span class="badge" contenteditable="false">Serving Impact</span>
-    <h2 contenteditable="false">Why Backend Runtime Focus Matters</h2>
-    <ul contenteditable="false">
-      <li>High-concurrency LLM serving depends on cache efficiency and scheduler policy.</li>
-      <li>Backend inference optimization reduces cost per request and improves SLO stability.</li>
-      <li>System-level gains are possible without retraining or changing model architecture.</li>
-    </ul>
-    <p contenteditable="false">This paper makes backend runtime a first-class research target, not only an implementation detail.</p>
-    <div class="transition-cue" contenteditable="false">Next: how this changes my research approach</div>
+  <div class="slide slide--layout" id="slide6" data-target="4:00-5:00">
+    <div class="slide-body slide-body--banner">
+      <div class="slide-banner-text">
+        <span class="badge">Writing Strategy 3</span>
+        <h2>Evidence Through Ablations</h2>
+        <p>They show not only speedups but <em>why</em> each part matters.</p>
+        <ul>
+          <li><strong>Evidence:</strong> remove cache, tree, or scheduling - performance drops.</li>
+          <li><strong>Effect:</strong> causal story, not only final bar charts.</li>
+        </ul>
+      </div>
+      <div class="slide-banner-media">
+        <img class="slide-fig slide-fig--chart" src="https://arxiv.org/html/2312.07104v2/x8.png" alt="Figure 8 ablation" />
+        <p class="fig-cap">Fig. 8: cache-hit study + RadixAttention component ablation.</p>
+      </div>
+    </div>
+    <div class="transition-cue">Next: reflection, takeaways, and conclusion (one slide)</div>
     <div class="slide-number">6</div>
   </div>
 
-  <div class="slide" id="slide7">
-    <span class="badge" contenteditable="false">Reflection</span>
-    <h2 contenteditable="false">Impact on My Backend Research</h2>
-    <h3 contenteditable="false">Research Lessons</h3>
-    <ul contenteditable="false">
-      <li>Model quality alone is not enough; runtime inference design matters.</li>
-      <li>I should profile KV reuse and scheduling behavior before optimizing prompts.</li>
-      <li>Evaluation should report latency, throughput, and cache-hit behavior together.</li>
-    </ul>
-    <h3 contenteditable="false">Writing Lessons</h3>
-    <ul contenteditable="false">
-      <li>Strong bottleneck framing makes systems papers easier for non-specialists.</li>
-      <li>Figures and ablations explain backend mechanisms better than long text.</li>
-      <li>Quantitative claims are convincing when tied to diverse runtime workloads.</li>
-    </ul>
-    <div class="transition-cue" contenteditable="false">Next: final backend-focused takeaway</div>
+  <div class="slide slide--layout slide--compact" id="slide7" data-target="5:00-7:40">
+    <div class="slide-body slide-body--merged">
+      <div class="merge-band">
+        <span class="badge">Reflection</span>
+        <h2>Impact on My Research Design</h2>
+        <ul>
+          <li><strong>Before:</strong> mostly final benchmark comparisons.</li>
+          <li><strong>After:</strong> clear bottleneck + modular design + planned ablations.</li>
+        </ul>
+        <div class="note">Shift from "we scored higher" to "we can explain each lever."</div>
+      </div>
+      <div class="merge-band">
+        <span class="badge">Takeaways</span>
+        <h2>Three Skills I Will Reuse</h2>
+        <ul>
+          <li><strong>Problem-first storytelling</strong></li>
+          <li><strong>Clear signposting</strong> across sections</li>
+          <li><strong>Ablation chains</strong> alongside headline metrics</li>
+        </ul>
+      </div>
+      <div class="merge-band">
+        <span class="badge">Conclusion</span>
+        <h2>Summary</h2>
+        <p>SGLang is both a systems paper and a lesson in persuasive structure.</p>
+        <div class="note">Relatable problem + clean layers + rigorous evidence = convincing technical writing.</div>
+      </div>
+    </div>
+    <div class="transition-cue">Next: thank you / Q&amp;A</div>
     <div class="slide-number">7</div>
   </div>
 
-  <div class="slide" id="slide8">
-    <span class="badge" contenteditable="false">Summary</span>
-    <h2 contenteditable="false">Key Takeaway</h2>
-    <div class="note" contenteditable="false">
-      SGLang shows that runtime inference backend optimizations, especially KV reuse and fast constrained decoding, can deliver major serving gains.
-    </div>
-    <p contenteditable="false">For complex LM programs, backend runtime design is a first-class research contribution.</p>
-    <div class="transition-cue" contenteditable="false">Thank you and questions</div>
+  <div class="slide slide--title" id="slide8" data-target="7:40-8:00">
+    <h1>Thank You</h1>
+    <p class="subtitle">Questions and Discussion</p>
     <div class="slide-number">8</div>
   </div>
 
-  <div class="slide" id="slide9">
-    <h1 contenteditable="false">Thank You</h1>
-    <p contenteditable="false">Questions and Discussion</p>
-    <p contenteditable="false">Paper: arXiv 2312.07104v2</p>
-    <div class="slide-number">9</div>
-  </div>
-
   <script>
-    let currentSlide = 0;
-    const totalSlides = 9;
-    let editMode = false;
+    const ARXIV = 'https://arxiv.org/html/2312.07104v2/';
+    document.querySelectorAll('img.slide-fig[src^="' + ARXIV + '"]').forEach((img) => {
+      img.addEventListener('error', () => {
+        img.alt = 'Image failed to load. Open online or download PNG from arXiv HTML.';
+        img.style.border = '2px dashed #c0392b';
+      });
+    });
 
-    let timerInterval = null;
-    let timerSeconds = 60;
-    let timerRunning = false;
+    let currentSlide = 1;
+    const totalSlides = 8;
 
-    const slides = document.querySelectorAll('.slide');
-
-    function showSlide(n) {
-      slides.forEach((slide) => slide.classList.remove('active'));
-      currentSlide = (n + totalSlides) % totalSlides;
-      slides[currentSlide].classList.add('active');
-      const progress = ((currentSlide + 1) / totalSlides) * 100;
+    function updateSlide() {
+      document.querySelectorAll('.slide').forEach((s) => s.classList.remove('active'));
+      const el = document.getElementById('slide' + currentSlide);
+      el.classList.add('active');
+      const progress = ((currentSlide - 1) / (totalSlides - 1)) * 100;
       document.getElementById('progressBar').style.width = progress + '%';
-    }
-
-    function nextSlide() {
-      if (!editMode) showSlide(currentSlide + 1);
-    }
-
-    function prevSlide() {
-      if (!editMode) showSlide(currentSlide - 1);
+      const t = el.getAttribute('data-target');
+      const st = document.getElementById('slideTarget');
+      if (t && st) st.textContent = 'Slide ' + currentSlide + ' suggested block: ' + t;
     }
 
     document.addEventListener('keydown', (e) => {
-      if (editMode && e.key !== 'Escape' && e.key.toLowerCase() !== 't') return;
-
-      switch (e.key) {
-        case 'ArrowRight':
-        case ' ': e.preventDefault(); nextSlide(); break;
-        case 'ArrowLeft': e.preventDefault(); prevSlide(); break;
-        case 'Home': e.preventDefault(); showSlide(0); break;
-        case 'End': e.preventDefault(); showSlide(totalSlides - 1); break;
-        case 'e':
-        case 'E': e.preventDefault(); toggleEditMode(); break;
-        case 't':
-        case 'T': e.preventDefault(); toggleToolbar(); break;
-        case 'Escape': if (editMode) { e.preventDefault(); toggleEditMode(); } break;
+      if (e.key === 'ArrowRight' || e.key === ' ') {
+        e.preventDefault();
+        if (currentSlide < totalSlides) {
+          currentSlide += 1;
+          updateSlide();
+        }
+      } else if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        if (currentSlide > 1) {
+          currentSlide -= 1;
+          updateSlide();
+        }
+      } else if (e.key === 't' || e.key === 'T') {
+        document.getElementById('deckTimer').classList.toggle('collapsed');
       }
     });
 
-    document.addEventListener('click', (e) => {
-      if (editMode) return;
-      if (e.target.closest('.toolbar') || e.target.closest('.timer-controls')) return;
-      const clickX = e.clientX;
-      if (clickX > window.innerWidth * 0.4) nextSlide();
-      else prevSlide();
-    });
+    updateSlide();
 
-    function toggleEditMode() {
-      editMode = !editMode;
-      const editable = document.querySelectorAll('[contenteditable]');
-      editable.forEach((el) => {
-        el.contentEditable = editMode ? 'true' : 'false';
-        el.style.outline = editMode ? '1px dashed #1B4942' : 'none';
-      });
-    }
-
-    function toggleToolbar() {
-      document.getElementById('toolbar').classList.toggle('visible');
-    }
-
-    function saveToCache() {
-      const html = document.documentElement.outerHTML;
-      localStorage.setItem('slides4pre1-cache', html);
-    }
-
-    function loadFromCache() {
-      const saved = localStorage.getItem('slides4pre1-cache');
-      if (!saved) return;
-      document.open();
-      document.write(saved);
-      document.close();
-    }
-
-    function downloadHTML() {
-      const html = document.documentElement.outerHTML;
-      const blob = new Blob([html], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'slides4pre1.html';
-      a.click();
-      URL.revokeObjectURL(url);
-    }
-
-    function clearCache() {
-      localStorage.removeItem('slides4pre1-cache');
-    }
+    const LIMIT_SEC = 8 * 60;
+    let remainSec = LIMIT_SEC;
+    let timerId = null;
+    let running = false;
 
     function formatTime(sec) {
-      const m = Math.floor(sec / 60);
-      const s = sec % 60;
-      return `${m}:${String(s).padStart(2, '0')}`;
+      const s = Math.max(0, sec);
+      const m = Math.floor(s / 60);
+      const r = s % 60;
+      return m + ':' + String(r).padStart(2, '0');
     }
 
-    function updateTimer() {
-      const el = document.getElementById('timer');
-      el.textContent = formatTime(timerSeconds);
-      if (timerSeconds <= 10) el.classList.add('warning');
-      else el.classList.remove('warning');
-    }
-
-    function startTimer() {
-      if (timerRunning) return;
-      document.getElementById('timer').classList.add('visible');
-      timerRunning = true;
-      timerInterval = setInterval(() => {
-        timerSeconds -= 1;
-        updateTimer();
-        if (timerSeconds <= 0) pauseTimer();
-      }, 1000);
-    }
-
-    function pauseTimer() {
-      timerRunning = false;
-      if (timerInterval) {
-        clearInterval(timerInterval);
-        timerInterval = null;
+    function renderTimer() {
+      const box = document.getElementById('deckTimer');
+      const disp = document.getElementById('timerDisplay');
+      if (remainSec > 0) {
+        disp.textContent = formatTime(remainSec);
+        box.classList.remove('over');
+        box.classList.toggle('warning', remainSec <= 60);
+      } else if (remainSec === 0) {
+        disp.textContent = '0:00';
+        box.classList.add('over', 'warning');
+      } else {
+        disp.textContent = '+' + formatTime(-remainSec);
+        box.classList.add('over', 'warning');
       }
     }
 
-    function resetTimer() {
-      pauseTimer();
-      timerSeconds = 60;
-      updateTimer();
-      document.getElementById('timer').classList.remove('visible');
+    function tick() {
+      remainSec -= 1;
+      renderTimer();
     }
 
-    showSlide(0);
-    updateTimer();
+    document.getElementById('btnTimerToggle').addEventListener('click', () => {
+      if (!running) {
+        running = true;
+        document.getElementById('btnTimerToggle').textContent = 'Pause';
+        timerId = setInterval(tick, 1000);
+      } else {
+        running = false;
+        document.getElementById('btnTimerToggle').textContent = 'Start';
+        if (timerId) clearInterval(timerId);
+        timerId = null;
+      }
+    });
+
+    document.getElementById('btnTimerReset').addEventListener('click', () => {
+      running = false;
+      if (timerId) clearInterval(timerId);
+      timerId = null;
+      remainSec = LIMIT_SEC;
+      document.getElementById('btnTimerToggle').textContent = 'Start';
+      document.getElementById('deckTimer').classList.remove('over', 'warning');
+      renderTimer();
+    });
+
+    document.getElementById('btnTimerCollapse').addEventListener('click', () => {
+      document.getElementById('deckTimer').classList.toggle('collapsed');
+    });
+
+    renderTimer();
   </script>
 </body>
 </html>

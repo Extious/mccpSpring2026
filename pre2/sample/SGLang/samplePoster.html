@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SGLang Poster - Efficient Execution of LLM Programs</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #f5f7f8; }
+    .poster {
+      width: 841px;
+      min-height: 1189px;
+      margin: 0 auto;
+      background: #fff;
+      color: #1f2a2e;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    }
+    .poster-header {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      padding: 20px 24px;
+      border-bottom: 3px solid #1B4942;
+    }
+    .logo-placeholder, .dept-placeholder {
+      font-size: 14px;
+      color: #5d6669;
+    }
+    .dept-placeholder { text-align: right; }
+    .poster-title-block { text-align: center; }
+    .poster-title {
+      margin: 0 0 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 40px;
+      line-height: 1.15;
+      color: #112d28;
+    }
+    .poster-meta {
+      margin: 0;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 21px;
+      color: #3b464a;
+    }
+    main { padding: 24px 30px 28px; }
+    .layman {
+      background: #E8F0ED;
+      border-left: 5px solid #1B4942;
+      padding: 14px 16px;
+      margin-bottom: 22px;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 19px;
+      line-height: 1.42;
+    }
+    .layman strong {
+      display: block;
+      margin-bottom: 6px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 22px;
+      color: #173e38;
+    }
+    section { margin-bottom: 20px; }
+    section h2 {
+      margin: 0 0 10px;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #1B4942;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 27px;
+      color: #142d29;
+    }
+    section p, section li {
+      margin: 0 0 7px;
+      font-family: "Times New Roman", Times, serif;
+      font-size: 18px;
+      line-height: 1.45;
+    }
+    section ul { margin: 0 0 10px; padding-left: 1.3em; }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-top: 12px;
+    }
+    .visual-box {
+      min-height: 170px;
+      border: 2px dashed #aeb8bc;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      color: #5c666a;
+      background: #f8fbfa;
+    }
+    .result-box {
+      background: #fef5e7;
+      border: 1px solid #f39c12;
+      padding: 11px 14px;
+      margin: 10px 0;
+      font-size: 18px;
+      font-family: "Times New Roman", Times, serif;
+    }
+    .references li { font-size: 16px; margin-bottom: 5px; }
+    .poster-figure {
+      border: 1px solid #cfd6d8;
+      border-radius: 8px;
+      padding: 8px;
+      background: #fafcfb;
+      overflow: hidden;
+    }
+    .poster-figure img {
+      width: 100%;
+      height: auto;
+      display: block;
+      max-height: 340px;
+      object-fit: contain;
+    }
+    .poster-figure--tall img { max-height: 420px; }
+    .poster-figure--wide img { max-height: 280px; }
+    .figure-caption {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      color: #5d6669;
+      margin-top: 8px;
+      line-height: 1.35;
+    }
+    .ablation-row { margin-top: 12px; }
+    .ablation-row .poster-figure img { max-height: 360px; }
+  </style>
+</head>
+<body>
+  <article class="poster" id="poster-canvas">
+    <header class="poster-header">
+      <div class="logo-placeholder">[University Logo]</div>
+      <div class="poster-title-block">
+        <h1 class="poster-title">SGLang: Efficient Execution of Structured Language Model Programs</h1>
+        <p class="poster-meta">Presenter: Zhan ZHAO</p>
+      </div>
+      <div class="dept-placeholder"></div>
+    </header>
+
+    <main>
+      <div class="layman">
+        <strong>Layman summary</strong>
+        AI systems often repeat the same long instructions many times. SGLang avoids this repeated work by reusing previous computation, which makes responses faster and reduces compute cost.
+      </div>
+
+      <section>
+        <h2>Introduction and Objective</h2>
+        <p>Modern LLM applications include multi-turn chat, agents, and structured generation workflows. Many requests share long prompt prefixes, but existing systems recompute them repeatedly.</p>
+        <p><strong>Objective:</strong> Build a serving system that reuses shared KV-cache states across calls to improve throughput and reduce latency without changing model architecture.</p>
+      </section>
+
+      <section>
+        <h2>Methodology</h2>
+        <ul>
+          <li><strong>Frontend DSL:</strong> Programmatic primitives for structured generation workflows.</li>
+          <li><strong>RadixAttention:</strong> KV cache organized in a radix tree to detect and reuse shared token prefixes.</li>
+          <li><strong>Cache-aware scheduler:</strong> Prioritizes requests with high cache overlap to maximize reuse.</li>
+        </ul>
+        <div class="grid-2">
+          <figure class="poster-figure poster-figure--wide">
+            <img src="https://arxiv.org/html/2312.07104v2/x1.png" alt="SGLang system architecture from paper Figure 1" />
+            <figcaption class="figure-caption">Figure 1 (Zheng et al., arXiv:2312.07104v2): system architecture — frontend language and optimized runtime.</figcaption>
+          </figure>
+          <figure class="poster-figure poster-figure--tall">
+            <img src="https://arxiv.org/html/2312.07104v2/x3.png" alt="RadixAttention radix tree evolution from paper Figure 3" />
+            <figcaption class="figure-caption">Figure 3: RadixAttention — radix tree over token prefixes with LRU-style reuse (from arXiv HTML).</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>Key Findings</h2>
+        <p>Experiments across multiple workloads show that SGLang improves both speed and serving efficiency against strong baselines.</p>
+        <div class="result-box">Main result: up to <strong>6.4x</strong> higher throughput and up to <strong>3.7x</strong> lower latency.</div>
+        <div class="grid-2">
+          <figure class="poster-figure poster-figure--wide">
+            <img src="https://arxiv.org/html/2312.07104v2/x5.png" alt="Normalized throughput Llama-7B from paper Figure 5" />
+            <figcaption class="figure-caption">Figure 5: normalized throughput on Llama-7B (higher is better).</figcaption>
+          </figure>
+          <figure class="poster-figure poster-figure--wide">
+            <img src="https://arxiv.org/html/2312.07104v2/x6.png" alt="Normalized latency Llama-7B from paper Figure 6" />
+            <figcaption class="figure-caption">Figure 6: normalized latency on Llama-7B (lower is better).</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>Ablation Evidence</h2>
+        <p>Ablation studies remove key components one by one, including radix-tree reuse and cache-aware scheduling. Performance drops in each variant, supporting the causal contribution of each design choice.</p>
+        <div class="ablation-row">
+          <figure class="poster-figure">
+            <img src="https://arxiv.org/html/2312.07104v2/x8.png" alt="Cache hit rate and RadixAttention ablation from paper Figure 8" />
+            <figcaption class="figure-caption">Figure 8: (a)(b) cache hit rate vs performance; (c) RadixAttention component ablation (from arXiv HTML).</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section>
+        <h2>Conclusion and Impact</h2>
+        <p>SGLang reframes LLM serving as a cache-reuse problem and provides a practical system-level solution. The approach improves user latency and lowers infrastructure cost, which is important for production AI services.</p>
+      </section>
+
+      <section class="references">
+        <h2>References</h2>
+        <ul>
+          <li>Zheng et al. Efficient Execution of Structured Language Model Programs. arXiv:2312.07104.</li>
+          <li>Baselines discussed in paper include vLLM and Guidance family systems.</li>
+          <li>Figures loaded from the arXiv HTML experimental version: https://arxiv.org/html/2312.07104v2</li>
+        </ul>
+      </section>
+    </main>
+  </article>
+</body>
+</html>
